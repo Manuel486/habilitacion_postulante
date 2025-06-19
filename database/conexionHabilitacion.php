@@ -1,6 +1,6 @@
 <?php
 
-class conexionHabilitacion
+class ConexionHabilitacion
 {
     private static $instancia;
     private $conexion;

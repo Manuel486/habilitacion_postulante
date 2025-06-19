@@ -34,6 +34,22 @@ $router->map("GET","/proyectoDetalle", function() {
     $controller->vistaProyectoDetalle();
 });
 
+// ========================= RUTAS - API =========================
+
+// ========================= RUTAS API DE PROYECTO DETALLE =========================
+
+$router->map('GET', '/api/obtenerFases', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiObtenerFases();
+});
+
+$router->map('GET', '/api/obtenerCargos', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiObtenerCargos();
+});
+
 $match = $router->match();
 
 if ($match && is_callable($match['target'])) {
