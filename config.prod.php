@@ -1,0 +1,4 @@
+<?php
+
+
+// Configuración de producción

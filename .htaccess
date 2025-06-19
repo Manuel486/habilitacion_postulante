@@ -1,0 +1,18 @@
+RewriteEngine On
+
+# Evitar redirección para rutas específicas que pueden contener archivos (documentos, fichas, downloads)
+RewriteCond %{REQUEST_URI} ^/postulantesv2/(documentos|fichas|downloads) [NC]
+RewriteRule ^ - [L]
+
+# Redirigir todo lo demás a index.php solo si no es un archivo o directorio existente
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(pdf|jpg|xlsx)$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+        Header set Expires "Thu, 01 Jan 1970 00:00:00 GMT"
+    </FilesMatch>
+</IfModule>
