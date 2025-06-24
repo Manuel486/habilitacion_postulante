@@ -17,7 +17,7 @@ class ProyectoModel {
                     WHERE
                         tb_proyecto1.nflgactivo = 1  
                     ORDER BY
-                        tb_proyecto1.ccodpry ASC ";
+                        tb_proyecto1.ccodpry ASC";
 
             $statement = $pdo->query($sql);
             $statement->execute();

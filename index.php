@@ -13,10 +13,6 @@ define("DATABASE_PATH",__DIR__."/database");
 $router = new AltoRouter();
 $router->setBasePath("/habilitacion_postulante");
 
-
-// Ejecutar ruta actual
-$match = $router->match();
-
 $router->map('GET', '/', function() {
     header('Location: /preseleccionado/proyectos');
     exit;
@@ -49,6 +45,13 @@ $router->map('GET', '/api/obtenerCargos', function() {
     $controller = new ProyectosController();
     $controller->apiObtenerCargos();
 });
+
+$router->map('POST', '/api/guardarRequerimiento', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiGuardarRequerimiento();
+});
+
 
 $match = $router->match();
 

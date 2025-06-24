@@ -10,13 +10,13 @@ class ProyectosController
 
     private $proyectoModel;
     private $generalModel;
-    private $requerimiento;
+    private $requerimientoModel;
 
     public function __construct()
     {
         $this->proyectoModel = new ProyectoModel();
         $this->generalModel = new GeneralModel();
-        $this->requerimiento = new Requerimiento();
+        $this->requerimientoModel = new Requerimiento();
     }
 
     public function vistaProyectos()
@@ -34,6 +34,7 @@ class ProyectosController
             $proyectos = $this->proyectoModel->obtenerProyectos();
             $fases = $this->generalModel->obtenerFases();
             $cargos = $this->generalModel->obtenerCargos();
+            $requerimientos = $this->requerimientoModel->obtenerRequerimientos();
             include VIEWS_PATH . '/proyectoDetalle.php';
         } catch (Exception $e) {
         }
@@ -63,20 +64,23 @@ class ProyectosController
                 exit;
             }
 
-            $requerimiento = $_POST["requerimiento"];
+            $requerimiento = json_decode($_POST["requerimiento"], true);
 
-            try {
-                $respuesta = $this->requerimiento->insertarRequerimiento($requerimiento);
-                if($respuesta){
-                    echo ApiRespuesta::exitoso("", "Requerimiento guardado con éxito.");
-                } else {
-                    echo ApiRespuesta::error("No se pudo guardar el requerimiento");
-                }
-            } catch (Exception $e) {
-                echo ApiRespuesta::error("Error inesperado al guardar requerimiento.");
+            if (!$requerimiento || !is_array($requerimiento)) {
+                echo ApiRespuesta::error("Datos de requerimiento inválidos");
+                exit;
+            }
+
+            $requerimiento["id_requerimiento"]= uniqid("RE");
+
+            $respuesta = $this->requerimientoModel->insertarRequerimiento($requerimiento);
+            if ($respuesta) {
+                echo ApiRespuesta::exitoso("", "Requerimiento guardado con éxito.");
+            } else {
+                echo ApiRespuesta::error("No se pudo guardar el requerimiento");
             }
         } catch (Exception $e) {
-
+            echo ApiRespuesta::error("Error inesperado al guardar requerimiento.");
         }
     }
 }
