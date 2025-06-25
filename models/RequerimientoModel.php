@@ -2,7 +2,7 @@
 
 require_once DATABASE_PATH . "/conexionDocumentos.php";
 
-class Requerimiento
+class RequerimientoModel
 {
     public function __construct()
     {

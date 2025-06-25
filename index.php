@@ -52,6 +52,18 @@ $router->map('POST', '/api/guardarRequerimiento', function() {
     $controller->apiGuardarRequerimiento();
 });
 
+$router->map('POST', '/api/buscarDocumentoPreseleccionado', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiBuscarDocumentoPreseleccionado();
+});
+
+$router->map('POST', '/api/guardarInformacionCandidato', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiGuardarInformacionCandidato();
+});
+
 
 $match = $router->match();
 
