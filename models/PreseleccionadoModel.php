@@ -4,9 +4,7 @@ require_once DATABASE_PATH . "/conexionDocumentos.php";
 
 class PreseleccionadoModel
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function obtenerPorDocumento($documento)
     {
@@ -51,38 +49,49 @@ class PreseleccionadoModel
     public function insertarCandidato($candidato)
     {
         $pdo = ConexionDocumentos::getInstancia()->getConexion();
-        try {
-            $sql = "INSERT INTO preseleccionado(
-                        id_preseleccionado,
-                        apellidos_nombres,
-                        documento,
-                        fecha_nacimiento,
-                        edad,
-                        exactian,
-                        fecha_ingreso_ultimo_proyecto,
-                        fecha_cese_ultimo_proyecto,
-                        nombre_ultimo_proyecto,
-                        telefono_1,
-                        telefono_2,
-                        email,
-                        departamento_residencia
-                    ) VALUES(
-                        :id_preseleccionado,
-                        :apellidos_nombres,
-                        :documento,
-                        :fecha_nacimiento,
-                        :edad,
-                        :exactian,
-                        :fecha_ingreso_ultimo_proyecto,
-                        :fecha_cese_ultimo_proyecto,
-                        :nombre_ultimo_proyecto,
-                        :telefono_1,
-                        :telefono_2,
-                        :email,
-                        :departamento_residencia
-                    )";
-            $statement = $pdo->prepare($sql);
 
+        try {
+            $sqlVerificar = "SELECT COUNT(*) FROM preseleccionado WHERE documento = :documento";
+            $stmtVerificar = $pdo->prepare($sqlVerificar);
+            $stmtVerificar->execute([':documento' => $candidato["documento"]]);
+            $existe = $stmtVerificar->fetchColumn();
+
+            if ($existe > 0) {
+                error_log("Ya existe un candidato con el DNI: " . $candidato["documento"]);
+                return false;
+            }
+
+            $sql = "INSERT INTO preseleccionado(
+                    id_preseleccionado,
+                    apellidos_nombres,
+                    documento,
+                    fecha_nacimiento,
+                    edad,
+                    exactian,
+                    fecha_ingreso_ultimo_proyecto,
+                    fecha_cese_ultimo_proyecto,
+                    nombre_ultimo_proyecto,
+                    telefono_1,
+                    telefono_2,
+                    email,
+                    departamento_residencia
+                ) VALUES(
+                    :id_preseleccionado,
+                    :apellidos_nombres,
+                    :documento,
+                    :fecha_nacimiento,
+                    :edad,
+                    :exactian,
+                    :fecha_ingreso_ultimo_proyecto,
+                    :fecha_cese_ultimo_proyecto,
+                    :nombre_ultimo_proyecto,
+                    :telefono_1,
+                    :telefono_2,
+                    :email,
+                    :departamento_residencia
+                )";
+
+            $statement = $pdo->prepare($sql);
             $statement->execute([
                 ":id_preseleccionado" => $candidato["id_preseleccionado"],
                 ":apellidos_nombres" => $candidato["apellidos_nombres"],
@@ -98,12 +107,14 @@ class PreseleccionadoModel
                 ":email" => $candidato["email"],
                 ":departamento_residencia" => $candidato["departamento_residencia"]
             ]);
+
             return $statement->rowCount() > 0;
         } catch (PDOException $e) {
             error_log("Error al insertar candidato: " . $e->getMessage());
             return false;
         }
     }
+
 
     public function insertarCandidatoProyecto($idProyecto, $idCandidato)
     {

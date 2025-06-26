@@ -35,7 +35,7 @@ formularioRequerimiento.addEventListener("submit", async (e) => {
   formdata.append("requerimiento", JSON.stringify(requerimiento));
 
   try {
-    const resp = await fetch("../api/guardarRequerimiento", {
+    const resp = await fetch("api/guardarRequerimiento", {
       method: "POST",
       body: formdata,
     });

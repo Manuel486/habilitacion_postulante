@@ -54,7 +54,6 @@ class ProyectosController
             error_log("Error en status controller: " . $e->getMessage());
             echo "Ocurrió un error al cargar los datos.";
         }
-
     }
 
     public function apiObtenerFases()
@@ -117,7 +116,6 @@ class ProyectosController
             } else {
                 echo ApiRespuesta::error("Persona no encontrada");
             }
-
         } catch (Exception $e) {
             echo ApiRespuesta::error("No se pudo realizar la búsqueda del documento por una falla en el servidor.");
         }
@@ -126,7 +124,7 @@ class ProyectosController
     public function apiGuardarInformacionCandidato()
     {
         try {
-            if (!isset($_POST["candidato"])) {
+            if (!isset($_POST["preseleccionado"])) {
                 echo ApiRespuesta::error("Debe enviar información del candidato");
                 exit;
             }
@@ -136,23 +134,28 @@ class ProyectosController
                 exit;
             }
 
-            $candidato = json_decode($_POST["candidato"], true);
+            $preseleccionado = json_decode($_POST["preseleccionado"], true);
             $idRequerimiento = $_POST["id_requerimiento"];
-            $idCandidato = $_POST["id_candidato"];
+            $idPreseleccionado = $_POST["id_preseleccionado"];
 
-            if (!$candidato || !is_array($candidato)) {
+            if (!$preseleccionado || !is_array($preseleccionado)) {
                 echo ApiRespuesta::error("Datos de candidato inválidos");
                 exit;
             }
 
             $id_preseleccionado = null;
-            if($idCandidato == ""){
+            if ($idPreseleccionado == "") {
                 $id_preseleccionado = uniqid("PRE");
-                $candidato = $this->preseleccionadoModel->insertarCandidato($candidato);
-            } elseif($idCandidato != ""){
-                $id_preseleccionado = $idCandidato;
+                $preseleccionado["id_preseleccionado"] = $id_preseleccionado;
+                $insertado = $this->preseleccionadoModel->insertarCandidato($preseleccionado);
+                if (!$insertado) {
+                    echo ApiRespuesta::error("No se pudo insertar el candidato (ya existe o hubo un error).");
+                    return;
+                }
+            } elseif ($idPreseleccionado != "") {
+                $id_preseleccionado = $idPreseleccionado;
             }
-            
+
             $respuesta = $this->preseleccionadoModel->insertarCandidatoProyecto($idRequerimiento, $id_preseleccionado);
 
             if ($respuesta) {

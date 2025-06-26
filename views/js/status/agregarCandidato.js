@@ -46,14 +46,14 @@ btnBuscarCandidato.addEventListener("click", async () => {
         </div>
       `;
       idCandidatoExiste = "";
-      limpiarCamposCandidato(candidato);
+      limpiarCamposCandidato();
     }
   } catch (error) {
     console.error(error);
+    idCandidatoExiste = "";
   } finally {
     btnBuscarCandidato.disabled = false;
-    btnBuscarCandidato.textContent = "Guardar";
-    idCandidatoExiste = "";
+    btnBuscarCandidato.textContent = "Buscar";
   }
 });
 
@@ -81,7 +81,7 @@ function llenarCamposCandidato(candidato) {
   txtDepartamentoResidencia.value = candidato.departamento_residencia;
 }
 
-function limpiarCamposCandidato(candidato) {
+function limpiarCamposCandidato() {
   const txtApellidosNombres = document.getElementById("txtApellidosNombres");
   const txtDocumento = document.getElementById("txtDocumento");
   const txtFechaDeNacimiento = document.getElementById("txtFechaDeNacimiento");
@@ -199,10 +199,12 @@ btnGuardarInformacionCandidato.addEventListener("click", async () => {
       departamento_residencia: txtDepartamentoResidencia.value,
     };
 
+    console.log(idCandidatoExiste);
+
     let formData = new FormData();
-    formData.append("candidato", JSON.stringify(candidato));
+    formData.append("preseleccionado", JSON.stringify(candidato));
     formData.append("id_requerimiento", idRequerimiento);
-    formData.append("id_candidato", idCandidatoExiste);
+    formData.append("id_preseleccionado", idCandidatoExiste);
 
     const resp = await fetch("api/guardarInformacionCandidato", {
       method: "POST",
@@ -210,7 +212,6 @@ btnGuardarInformacionCandidato.addEventListener("click", async () => {
     });
 
     const data = await resp.json();
-
     if (data.exitoso) {
       Swal.fire({
         title: "Éxito",
