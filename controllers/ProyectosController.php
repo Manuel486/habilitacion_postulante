@@ -4,6 +4,7 @@ require_once MODELS_PATH . "/ProyectoModel.php";
 require_once MODELS_PATH . "/GeneralModel.php";
 require_once MODELS_PATH . "/RequerimientoModel.php";
 require_once MODELS_PATH . "/PreseleccionadoModel.php";
+require_once MODELS_PATH . "/CursoCertificacionModel.php";
 require_once CONTROLLERS_PATH . "/helpers/ApiRespuesta.php";
 
 class ProyectosController
@@ -13,6 +14,7 @@ class ProyectosController
     private $generalModel;
     private $requerimientoModel;
     private $preseleccionadoModel;
+    private $curso_certificacionModel;
 
     public function __construct()
     {
@@ -20,13 +22,14 @@ class ProyectosController
         $this->generalModel = new GeneralModel();
         $this->requerimientoModel = new RequerimientoModel();
         $this->preseleccionadoModel = new PreseleccionadoModel();
+        $this->curso_certificacionModel = new CursoCertificacionModel();
     }
 
     public function vistaProyectos()
     {
         try {
             $proyectos = $this->proyectoModel->obtenerProyectos();
-
+            
             include VIEWS_PATH . '/proyectos.php';
         } catch (Exception $e) {
         }
@@ -39,8 +42,8 @@ class ProyectosController
             $fases = $this->generalModel->obtenerFases();
             $cargos = $this->generalModel->obtenerCargos();
             $requerimientos = $this->requerimientoModel->obtenerRequerimientos();
+            $certificaciones = $this->curso_certificacionModel->obtenerCursosCertificaciones();
 
-            // Mapear candidatos a cada requerimiento
             $requerimientos = array_map(function ($requerimiento) {
                 $requerimiento["candidatos"] = $this->preseleccionadoModel
                     ->obtenerCandidatosPorRequerimiento($requerimiento["id_requerimiento"]);

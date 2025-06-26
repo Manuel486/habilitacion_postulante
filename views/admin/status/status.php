@@ -143,7 +143,7 @@
     </div>
   </div>
 
-  <?php include_once "agregarCandidato.php"; ?>
+  <?php include_once "agregarPreseleccionado.php"; ?>
   <?php include_once "formularioRequerimiento.php"; ?>
 
   <script src="<?= BASE_URL ?>views/js/bootstrap.bundle.min.js"></script>

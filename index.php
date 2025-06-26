@@ -64,6 +64,13 @@ $router->map('POST', '/api/guardarInformacionCandidato', function() {
     $controller->apiGuardarInformacionCandidato();
 });
 
+$router->map('GET', '/api/obtenerCursosCertificaciones', function() {
+    require_once CONTROLLERS_PATH.'/CursoCertificacionController.php';
+    $controller = new CursoCertificacionController();
+    $controller->apiObtenerCurCert();
+});
+
+
 
 $match = $router->match();
 

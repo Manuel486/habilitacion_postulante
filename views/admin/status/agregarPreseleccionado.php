@@ -23,8 +23,8 @@
                         </div>
                     </div>
                     <div class="col-12 p-2" id="alertaBusquedaDocumento">
-                        
-                        
+
+
                     </div>
                 </div>
             </div>
@@ -38,8 +38,8 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="requerimientoModal" tabindex="-1" aria-labelledby="requerimientoModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="requerimientoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="requerimientoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -102,46 +102,49 @@
                         <div class="row row-gap-3">
                             <div class="col-lg-4">
                                 <label class="form-label" for="txtApellidosNombres">Apellidos y nombres</label>
-                                <input class="form-control border-dark"
-                                    placeholder="Apellidos y nombres" type="text" id="txtApellidosNombres" />
+                                <input class="form-control border-dark" placeholder="Apellidos y nombres" type="text"
+                                    id="txtApellidosNombres" />
                             </div>
                             <div class="col-lg-2">
                                 <label class="form-label" for="txtDocumento">Documento</label>
-                                <input class="form-control  border-dark" placeholder="DNI" type="text" id="txtDocumento" />
+                                <input class="form-control  border-dark" placeholder="DNI" type="text"
+                                    id="txtDocumento" />
                             </div>
                             <div class="col-lg-3">
                                 <label class="form-label" for="txtFechaDeNacimiento">Fecha de nacimiento</label>
-                                <input class="form-control  border-dark" placeholder="" type="date" id="txtFechaDeNacimiento" />
+                                <input class="form-control  border-dark" placeholder="" type="date"
+                                    id="txtFechaDeNacimiento" />
                             </div>
                             <div class="col-lg-3">
                                 <label class="form-label" for="txtEdad">Edad</label>
-                                <input class="form-control  border-dark" placeholder="Edad"
-                                    type="number" id="txtEdad" />
+                                <input class="form-control  border-dark" placeholder="Edad" type="number"
+                                    id="txtEdad" />
                             </div>
                             <div class="col-lg-2">
                                 <label class="form-label" for="txtExactian">Exactian</label>
-                                <input class="form-control  border-dark" placeholder="Exactian"
-                                    type="text" id="txtExactian" />
+                                <input class="form-control  border-dark" placeholder="Exactian" type="text"
+                                    id="txtExactian" />
                             </div>
                             <div class="col-lg-2">
                                 <label class="form-label" for="txtTelefono1">Teléfono 1</label>
-                                <input class="form-control  border-dark" placeholder="Teléfono 1"
-                                    type="text" id="txtTelefono1" />
+                                <input class="form-control  border-dark" placeholder="Teléfono 1" type="text"
+                                    id="txtTelefono1" />
                             </div>
                             <div class="col-lg-2">
                                 <label class="form-label" for="txtTelefono2">Teléfono 2</label>
-                                <input class="form-control  border-dark" placeholder="Teléfono 2"
-                                    type="text" id="txtTelefono2" />
+                                <input class="form-control  border-dark" placeholder="Teléfono 2" type="text"
+                                    id="txtTelefono2" />
                             </div>
                             <div class="col-lg-3">
                                 <label class="form-label" for="txtEmail">Email</label>
-                                <input class="form-control  border-dark" placeholder="Ingresar email"
-                                    type="email" id="txtEmail"/>
+                                <input class="form-control  border-dark" placeholder="Ingresar email" type="email"
+                                    id="txtEmail" />
                             </div>
                             <div class="col-lg-3">
-                                <label class="form-label" for="txtDepartamentoResidencia">Departamento de residencia</label>
-                                <input class="form-control  border-dark"
-                                    placeholder="Ingresar departamento" type="text" id="txtDepartamentoResidencia" />
+                                <label class="form-label" for="txtDepartamentoResidencia">Departamento de
+                                    residencia</label>
+                                <input class="form-control  border-dark" placeholder="Ingresar departamento" type="text"
+                                    id="txtDepartamentoResidencia" />
                             </div>
 
                             <div class="col-lg-12">
@@ -150,13 +153,11 @@
 
                             <div class="col-lg-3">
                                 <label for="">POLIZA</label>
-                                <input class="form-control  border-dark" type="text"
-                                    placeholder="Ingresar estado" />
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" />
                             </div>
                             <div class="col-lg-3">
                                 <label for="">VIABILIDAD</label>
-                                <input class="form-control  border-dark" type="text"
-                                    placeholder="Ingresar estado" />
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" />
                             </div>
                             <div class="col-lg-6">
                                 <label for="">Observación</label>
@@ -169,8 +170,7 @@
                             </div>
                             <div class="col-lg-3">
                                 <label for="">Estado</label>
-                                <input class="form-control  border-dark" type="text"
-                                    placeholder="Ingresar estado" />
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" />
                             </div>
                             <div class="col-lg-6">
                                 <label for="">Observación 2</label>
@@ -179,8 +179,7 @@
                             </div>
                             <div class="col-lg-3">
                                 <label for="">ALFA</label>
-                                <input class="form-control  border-dark" type="text"
-                                    placeholder="Ingresar Alfa" />
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar Alfa" />
                             </div>
                             <div class="col-lg-3">
                                 <label for="">VIABILIDAD2</label>
@@ -227,12 +226,10 @@
                                                         placeholder="Ingresar el nombre del proyecto" />
                                                 </td>
                                                 <td class="">
-                                                    <input type="date"
-                                                        class="form-control  border-dark" />
+                                                    <input type="date" class="form-control  border-dark" />
                                                 </td>
                                                 <td class="">
-                                                    <input type="date"
-                                                        class="form-control  border-dark" />
+                                                    <input type="date" class="form-control  border-dark" />
                                                 </td>
                                                 <td class="">
                                                     <input type="text" class="form-control  border-dark"
@@ -291,14 +288,14 @@
                                         <button class="btn btn-outline-dark d-flex gap-2">
                                             <i class="bi bi-search"></i>Buscar
                                         </button>
-                                        <button class="btn btn-outline-dark d-flex gap-2">
+                                        <button class="btn btn-outline-dark d-flex gap-2" id="btnAgregarCertificacion">
                                             <i class="bi bi-plus-circle"></i>Agregar
                                         </button>
                                     </div>
                                 </div>
                                 <div class="my-1 p-1">
                                     <div class="table-responsive">
-                                        <table class="table table-hover">
+                                        <table class="table table-hover" id="tblCertificacionesPreseleccionados">
                                             <thead class="">
                                                 <th>Nombre</th>
                                                 <th>Inicio</th>
@@ -307,22 +304,6 @@
                                                 <th></th>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td class="">
-                                                        <input type="text"
-                                                            class="form-control  border-dark"
-                                                            placeholder="Ingresar nombre del curso o certificación" />
-                                                    </td>
-                                                    <td class="">
-                                                        <input type="date"
-                                                            class="form-control  border-dark" />
-                                                    </td>
-                                                    <td class="">
-                                                        <input type="date"
-                                                            class="form-control  border-dark" />
-                                                    </td>
-                                                    <td></td>
-                                                </tr>
                                                 <tr>
                                                     <td class="">Certificacion</td>
                                                     <td class="">2/10/2024</td>
@@ -353,14 +334,14 @@
                                         <button class="btn btn-outline-dark d-flex gap-2">
                                             <i class="bi bi-search"></i>Buscar
                                         </button>
-                                        <button class="btn btn-outline-dark d-flex gap-2">
+                                        <button class="btn btn-outline-dark d-flex gap-2" id="btnAgregarCurso">
                                             <i class="bi bi-plus-circle"></i>Agregar
                                         </button>
                                     </div>
                                 </div>
                                 <div class="my-1 p-1">
                                     <div class="table-responsive">
-                                        <table class="table table-hover">
+                                        <table class="table table-hover" id="tblCursosPreseleccionado">
                                             <thead class="">
                                                 <th>Nombre</th>
                                                 <th>Inicio</th>
@@ -370,31 +351,11 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td class="">
-                                                        <input type="text"
-                                                            class="form-control  border-dark"
-                                                            placeholder="Ingresar nombre del curso" />
-                                                    </td>
-                                                    <td class="">
-                                                        <input type="date"
-                                                            class="form-control  border-dark" />
-                                                    </td>
-                                                    <td class="">
-                                                        <input type="date"
-                                                            class="form-control  border-dark" />
-                                                    </td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
                                                     <td class="">Curso CBS/PTEHS</td>
                                                     <td class="">2/10/2024</td>
                                                     <td class="">2/10/2025</td>
                                                     <td>
                                                         <span class="badge text-bg-success">Vigente</span>
-                                                    </td>
-                                                    <td>
-                                                        <i class="bi bi-pencil"></i>
-                                                        <i class="bi bi-trash"></i>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -404,10 +365,6 @@
                                                     <td>
                                                         <span class="badge text-bg-danger">Caducó</span>
                                                     </td>
-                                                    <td>
-                                                        <i class="bi bi-pencil"></i>
-                                                        <i class="bi bi-trash"></i>
-                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Curso repsol</td>
@@ -415,10 +372,6 @@
                                                     <td>11/04/2025</td>
                                                     <td>
                                                         <span class="badge text-bg-danger">Caducó</span>
-                                                    </td>
-                                                    <td>
-                                                        <i class="bi bi-pencil"></i>
-                                                        <i class="bi bi-trash"></i>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -428,10 +381,6 @@
                                                     <td>
                                                         <span class="badge text-bg-danger">Caducó</span>
                                                     </td>
-                                                    <td>
-                                                        <i class="bi bi-pencil"></i>
-                                                        <i class="bi bi-trash"></i>
-                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>CURSO.ALT/E.CONF/EXC/BLOQ/COT</td>
@@ -439,10 +388,6 @@
                                                     <td>11/04/2025</td>
                                                     <td>
                                                         <span class="badge text-bg-danger">Caducó</span>
-                                                    </td>
-                                                    <td>
-                                                        <i class="bi bi-pencil"></i>
-                                                        <i class="bi bi-trash"></i>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -454,31 +399,17 @@
                     </div>
                     <div class="tab-pane fade" id="informacion_medica" role="tabpanel">
                         <div class="row row-gap-3">
-                            <div class="col-lg-12">
-                                <div class="row">
-                                    <div class="col-lg-3">
-                                        <label class="form-label" for="">4ta vacuna</label>
-                                        <input class="form-control  border-dark" type="text"
-                                            placeholder="Ingresar 4ta vacuna" />
-                                    </div>
-                                    <div class="col-lg-3">
-                                        <label class="form-label" for="">Curso repsol</label>
-                                        <input class="form-control  border-dark" type="text"
-                                            placeholder="Ingresar estado" />
-                                    </div>
-                                    <div class="col-lg-3">
-                                        <label class="form-label" for="">Departamento de residencia</label>
-                                        <input class="form-control  border-dark" type="text"
-                                            style="background-color: #177cdb; color: white" value="LIMA" readonly />
-                                    </div>
-                                </div>
+                            <div class="col-lg-3">
+                                <label class="form-label" for="">4ta vacuna</label>
+                                <input class="form-control  border-dark" type="text"
+                                    placeholder="Ingresar 4ta vacuna" />
                             </div>
                             <div class="col-lg-3">
-                                <label for="">Fecha de examen médico</label>
+                                <label class="form-label" for="">Fecha de examen médico</label>
                                 <input class="form-control  border-dark" type="date" />
                             </div>
                             <div class="col-lg-3">
-                                <label for="">Clinica</label>
+                                <label class="form-label" for="">Clinica</label>
                                 <select class="form-select  border-dark" name="" id="">
                                     <option value="" disabled selected>
                                         Seleccionar opción
@@ -488,33 +419,20 @@
                                 </select>
                             </div>
                             <div class="col-lg-3">
-                                <label for="">Resultado</label>
+                                <label class="form-label" for="">Resultado</label>
                                 <input class="form-control  border-dark" type="date" />
                             </div>
                             <div class="col-lg-3">
-                                <label for="">Pase medico</label>
-                                <input class="form-control  border-dark" type="text"
-                                    placeholder="Ingresar estado" />
+                                <label class="form-label" for="">Pase medico</label>
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" />
                             </div>
                             <div class="col-lg-3">
-                                <label for="">PM</label>
-                                <input class="form-control  border-dark" type="text"
-                                    placeholder="Ingresar estado" />
+                                <label class="form-label" for="">PM</label>
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" />
                             </div>
                             <div class="col-lg-3">
-                                <label for="">Informe médico</label>
-                                <input class="form-control  border-dark" type="text"
-                                    placeholder="Ingresar estado" />
-                            </div>
-                            <div class="col-lg-3">
-                                <label for="">CURSO.ALT/E.CONF/EXC/BLOQ/COT</label>
-                                <input class="form-control  border-dark" type="text"
-                                    placeholder="Ingresar estado" />
-                            </div>
-                            <div class="col-lg-3">
-                                <label for="">CURSO.CBS/TOP/AACC.INDUC</label>
-                                <input class="form-control  border-dark" type="text"
-                                    placeholder="Ingresar estado" />
+                                <label class="form-label" for="">Informe médico</label>
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" />
                             </div>
                         </div>
                     </div>
@@ -533,4 +451,4 @@
     </div>
 </div>
 
-<script src="<?= BASE_URL ?>views/js/status/agregarCandidato.js"></script>
+<script src="<?= BASE_URL ?>views/js/status/agregarPreseleccionado.js"></script>

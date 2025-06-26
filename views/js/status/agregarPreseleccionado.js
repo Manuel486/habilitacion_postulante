@@ -2,10 +2,36 @@ const btnBuscarCandidato = document.getElementById("btnBuscarCandidato");
 const btnGuardarInformacionCandidato = document.getElementById(
   "btnGuardarInformacionCandidato"
 );
+const btnAgregarCurso = document.getElementById("btnAgregarCurso");
+const btnAgregarCertificacion = document.getElementById(
+  "btnAgregarCertificacion"
+);
 
 let idCandidatoExiste = "";
 let idRequerimiento = null;
 const txtDocumentoCandidato = document.getElementById("txtDocumentoCandidato");
+
+let cursos = [];
+let certificaciones = [];
+
+const obtenerCursosCertificaciones = async () => {
+  try {
+    const resp = await fetch("api/obtenerCursosCertificaciones", {
+      method: "GET",
+    });
+    const data = await resp.json();
+    cursos = data.respuesta.filter((elemento) => {
+      return elemento.tipo == "curso";
+    });
+    certificaciones = data.respuesta.filter((elemento) => {
+      return elemento.tipo == "certificado";
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+obtenerCursosCertificaciones();
 
 function cambiarIdRequerimiento(nuevoIdRequerimiento) {
   idRequerimiento = nuevoIdRequerimiento;
@@ -105,7 +131,6 @@ function limpiarCamposCandidato() {
   txtDepartamentoResidencia.value = "";
 }
 
-
 const documentoModal = document.getElementById("documentoModal");
 
 documentoModal.addEventListener("hidden.bs.modal", function (event) {
@@ -115,7 +140,6 @@ documentoModal.addEventListener("hidden.bs.modal", function (event) {
   alertaBusquedaDocumento.innerHTML = "";
   txtDocumentoCandidato.value = "";
 });
-
 
 const requerimientoModal = document.getElementById("requerimientoModal");
 
@@ -142,10 +166,7 @@ requerimientoModal.addEventListener("hidden.bs.modal", function (event) {
   txtTelefono2.value = "";
   txtEmail.value = "";
   txtDepartamentoResidencia.value = "";
-
 });
-
-
 
 function camposValidosBuscarCandidato() {
   if (txtDocumentoCandidato.value.trim() === "") {
@@ -163,7 +184,6 @@ txtDocumentoCandidato.addEventListener("input", () => {
 });
 
 btnGuardarInformacionCandidato.addEventListener("click", async () => {
-
   if (!camposValidosAgregarCandidato()) return;
 
   btnGuardarInformacionCandidato.disabled = true;
@@ -198,8 +218,6 @@ btnGuardarInformacionCandidato.addEventListener("click", async () => {
       email: txtEmail.value,
       departamento_residencia: txtDepartamentoResidencia.value,
     };
-
-    console.log(idCandidatoExiste);
 
     let formData = new FormData();
     formData.append("preseleccionado", JSON.stringify(candidato));
@@ -257,3 +275,175 @@ function camposValidosAgregarCandidato() {
 
   return validacion;
 }
+
+// btnAgregarCurso.addEventListener("click", () => {
+//   const tblCursosPreseleccionado = document.querySelector(
+//     "#tblCursosPreseleccionado tbody"
+//   );
+
+//   const tr = document.createElement("tr");
+//   tr.innerHTML = `
+//     <tr>
+//         <td class="">
+//             <select class="form-select border-dark">
+//               <option selected disabled>Seleccionar un curso</option>
+//               ${cursos.map(
+//                 (curso) =>
+//                   `<option value="${curso.id_curso_certificacion}">${curso.nombre}</option>`
+//               )}
+//             </select>
+//         </td>
+//         <td class="">
+//             <input type="date"
+//                 class="form-control  border-dark" />
+//         </td>
+//         <td class="align-content-center">
+//             <i class="bi bi-trash3-fill text-danger btnEliminarCurso cursor-pointer"></i>
+//         </td>
+//     </tr>
+//   `;
+
+//   tblCursosPreseleccionado.prepend(tr);
+// });
+
+// document
+//   .querySelector("#tblCursosPreseleccionado tbody")
+//   .addEventListener("click", (e) => {
+//     if (e.target.classList.contains("btnEliminarCurso")) {
+//       const fila = e.target.closest("tr");
+//       fila.remove();
+//     }
+//   });
+
+document
+  .getElementById("requerimientoModal")
+  .addEventListener("click", function (e) {
+    console.log(e);
+    if (e.target && e.target.matches("#btnAgregarCurso")) {
+      const tblCursosPreseleccionado = document.querySelector(
+        "#tblCursosPreseleccionado tbody"
+      );
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <tr>
+            <td class="">
+                <select class="form-select border-dark">
+                  <option selected disabled>Seleccionar un curso</option>
+                  ${cursos.map(
+                    (curso) =>
+                      `<option value="${curso.id_curso_certificacion}">${curso.nombre}</option>`
+                  )}
+                </select>
+            </td>
+            <td class="">
+                <input type="date"
+                    class="form-control  border-dark" />
+            </td>
+            <td class="align-content-center">
+                <i class="bi bi-trash3-fill text-danger btnEliminarCurso cursor-pointer"></i>
+            </td>
+        </tr>
+      `;
+
+      tblCursosPreseleccionado.prepend(tr);
+    }
+
+    document
+      .querySelector("#tblCursosPreseleccionado tbody")
+      .addEventListener("click", (e) => {
+        if (e.target.classList.contains("btnEliminarCurso")) {
+          const fila = e.target.closest("tr");
+          fila.remove();
+        }
+      });
+  });
+
+document
+  .getElementById("requerimientoModal")
+  .addEventListener("click", function (e) {
+    console.log(e);
+    if (e.target && e.target.matches("#btnAgregarCertificacion")) {
+      const tblCertificacionesPreseleccionado = document.querySelector(
+        "#tblCertificacionesPreseleccionados tbody"
+      );
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <tr>
+            <td class="">
+                <select class="form-select border-dark">
+                  <option selected disabled>Seleccionar un curso</option>
+                  ${certificaciones.map(
+                    (curso) =>
+                      `<option value="${curso.id_curso_certificacion}">${curso.nombre}</option>`
+                  )}
+                </select>
+            </td>
+            <td class="">
+                <input type="date"
+                    class="form-control  border-dark" />
+            </td>
+            <td class="align-content-center">
+                <i class="bi bi-trash3-fill text-danger btnEliminarCertificacion cursor-pointer"></i>
+            </td>
+        </tr>
+      `;
+
+      tblCertificacionesPreseleccionado.prepend(tr);
+
+      document
+        .querySelector("#tblCertificacionesPreseleccionados tbody")
+        .addEventListener("click", (e) => {
+          if (e.target.classList.contains("btnEliminarCertificacion")) {
+            const fila = e.target.closest("tr");
+            fila.remove();
+          }
+        });
+    }
+  });
+
+// btnAgregarCertificacion.addEventListener("click", () => {
+//   const tblCertificacionesPreseleccionado = document.querySelector(
+//     "#tblCertificacionesPreseleccionados tbody"
+//   );
+
+//   const tr = document.createElement("tr");
+//   tr.innerHTML = `
+//     <tr>
+//         <td class="">
+//             <select class="form-select border-dark">
+//               <option selected disabled>Seleccionar un curso</option>
+//               ${certificaciones.map(
+//                 (curso) =>
+//                   `<option value="${curso.id_curso_certificacion}">${curso.nombre}</option>`
+//               )}
+//             </select>
+//         </td>
+//         <td class="">
+//             <input type="date"
+//                 class="form-control  border-dark" />
+//         </td>
+//         <td class="align-content-center">
+//             <i class="bi bi-trash3-fill text-danger btnEliminarCertificacion cursor-pointer"></i>
+//         </td>
+//     </tr>
+//   `;
+
+//   tblCertificacionesPreseleccionado.prepend(tr);
+// });
+
+let estadoInicialModal;
+
+document.addEventListener("DOMContentLoaded", function () {
+  const modal = document.getElementById("requerimientoModal");
+  estadoInicialModal = modal.innerHTML;
+});
+
+const modalElement = document.getElementById("requerimientoModal");
+
+modalElement.addEventListener("hidden.bs.modal", function () {
+  modalElement.innerHTML = estadoInicialModal;
+
+  // Re-inicializar eventos que tenías si es necesario (por ejemplo, botones "Agregar", etc.)
+});
