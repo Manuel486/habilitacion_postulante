@@ -117,7 +117,9 @@
                               <div class="col p-2"><?= $candidato["fecha_cese_ultimo_proyecto"] ?></div>
                               <div class="col p-2"><?= $candidato["departamento_residencia"] ?></div>
                               <div class="col p-2">
-                                <button class="btn btn-outline-info">
+                                <button class="btn btn-outline-info" data-bs-target="#requerimientoModal"
+                                  data-bs-toggle="modal"
+                                  onClick="cargarDatosPreseleccionado('<?= $candidato["id_preseleccionado"] ?>','<?= $requerimiento["id_requerimiento"] ?>')">
                                   <i class="bi bi-eye"></i>
                                 </button>
                                 <button class="btn btn-outline-danger">
@@ -127,7 +129,6 @@
                             </div>
 
                           <?php endforeach; ?>
-
 
                         </div>
                       </div>
@@ -148,6 +149,8 @@
 
   <script src="<?= BASE_URL ?>views/js/bootstrap.bundle.min.js"></script>
   <script src="<?= BASE_URL ?>views/js/status/status.js"></script>
+  <script src="<?= BASE_URL ?>views/js/status/agregarPreseleccionado.js"></script>
+
 </body>
 
 </html>

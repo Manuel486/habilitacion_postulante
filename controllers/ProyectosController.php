@@ -29,7 +29,7 @@ class ProyectosController
     {
         try {
             $proyectos = $this->proyectoModel->obtenerProyectos();
-            
+
             include VIEWS_PATH . '/proyectos.php';
         } catch (Exception $e) {
         }
@@ -112,15 +112,48 @@ class ProyectosController
             }
 
             $documento = $_POST["documento"];
+            $idRequerimiento = $_POST["id_requerimiento"];
 
-            $respuesta = $this->preseleccionadoModel->obtenerPorDocumento($documento);
-            if ($respuesta["exitoso"]) {
-                echo ApiRespuesta::exitoso($respuesta["preseleccionado"], "Persona encontrada");
+            $preseleccionado = $this->preseleccionadoModel->obtenerPorDocumento($documento);
+
+            if($preseleccionado){
+                $this->preseleccionadoModel->insertarCandidatoProyecto($idRequerimiento, $preseleccionado["id_preseleccionado"]);
+            }
+            
+            if ($preseleccionado) {
+                echo ApiRespuesta::exitoso($preseleccionado, "Persona encontrada");
             } else {
                 echo ApiRespuesta::error("Persona no encontrada");
             }
         } catch (Exception $e) {
             echo ApiRespuesta::error("No se pudo realizar la búsqueda del documento por una falla en el servidor.");
+        }
+    }
+
+    public function apiBuscarDetallePreseleccionado()
+    {
+        try {
+            if (!isset($_POST["id_preseleccionado"])) {
+                echo ApiRespuesta::error("Debe enviar el id del preseleccionado");
+                exit;
+            }
+
+            $idPreseleccionado = $_POST["id_preseleccionado"];
+
+            $preseleccionado = $this->preseleccionadoModel->obtenerPorIdPreseleccionado($idPreseleccionado);
+            $cursos = $this->preseleccionadoModel->obtenerCurCertPreseleccionado($idPreseleccionado, "curso");
+            $certificados = $this->preseleccionadoModel->obtenerCurCertPreseleccionado($idPreseleccionado, "certificado");
+
+            $preseleccionado["cursos"] = $cursos;
+            $preseleccionado["certificados"] = $certificados;
+            if ($preseleccionado) {
+                echo ApiRespuesta::exitoso($preseleccionado, "Persona encontrada");
+            } else {
+                echo ApiRespuesta::error("Persona no encontrada");
+            }
+
+        } catch (Exception $e) {
+            echo ApiRespuesta::error("No se pudo obtener el detalle del preseleccionado");
         }
     }
 
@@ -168,6 +201,84 @@ class ProyectosController
             }
         } catch (Exception $e) {
             echo ApiRespuesta::error("Error inesperado al guardar candidato.");
+        }
+    }
+
+    public function apiGuardarCurCertPreseleccionado()
+    {
+        try {
+            if (!isset($_POST["pre_cur_cert"])) {
+                echo ApiRespuesta::error("Debe enviar información del preseleccionado y el curso/certificado");
+                exit;
+            }
+
+            $pre_cur_cert = json_decode($_POST["pre_cur_cert"], true);
+
+            if (!$pre_cur_cert || !is_array($pre_cur_cert)) {
+                echo ApiRespuesta::error("Datos del preseleccionado y curso/preseleccionado inválidos");
+                exit;
+            }
+
+            $pre_cur_cert["id_prese_curs_certi"] = uniqid("PRECC");
+
+
+            $curso = $this->curso_certificacionModel->obtenerCursoCertPorId($pre_cur_cert["id_curs_certi"]);
+
+            $fecha_inicio = $pre_cur_cert["fecha_inicio"];
+
+            $fecha_fin = date("Y-m-d", strtotime("+".$curso["duracion"]." month", strtotime($fecha_inicio)));
+
+            $pre_cur_cert["fecha_fin"] = $fecha_fin;
+            $pre_cur_cert["nombre_curso"] = $curso["nombre"];
+            $pre_cur_cert["id_curso"] = $curso["id_curso_certificacion"];
+
+            $respuesta = $this->preseleccionadoModel->guardarCurCertPreseleccionado($pre_cur_cert);
+
+            $curso = $this->preseleccionadoModel->obtenerUnicoCurCertPreseleccionado($pre_cur_cert["id_prese_curs_certi"]);
+            if ($respuesta) {
+                echo ApiRespuesta::exitoso($curso, "Preseleccionado guarda con curso/certificado");
+            } else {
+                echo ApiRespuesta::error("No se pudo guardar el curso/certificado del preseleccionado");
+            }
+        } catch (Exception $e) {
+            echo ApiRespuesta::error("Error inesperado al guardar preseleccionado con el curso/certificado.");
+        }
+    }
+
+    public function apiActualizarCurCertPreseleccionado()
+    {
+        try {
+            if (!isset($_POST["pre_cur_cert"])) {
+                echo ApiRespuesta::error("Debe enviar información del preseleccionado y el curso/certificado");
+                exit;
+            }
+
+            $pre_cur_cert = json_decode($_POST["pre_cur_cert"], true);
+
+            if (!$pre_cur_cert || !is_array($pre_cur_cert)) {
+                echo ApiRespuesta::error("Datos del preseleccionado y curso/preseleccionado inválidos");
+                exit;
+            }
+
+            $cursoInfo = $this->curso_certificacionModel->obtenerCursoCertPorId($pre_cur_cert["id_curs_certi"]);
+
+            $fecha_inicio = $pre_cur_cert["fecha_inicio"];
+
+            $fecha_fin = date("Y-m-d", strtotime("+".$cursoInfo["duracion"]." month", strtotime($fecha_inicio)));
+
+            $pre_cur_cert["fecha_fin"] = $fecha_fin;
+            
+            $respuesta = $this->preseleccionadoModel->actualizarCurCertPreseleccionado($pre_cur_cert);
+
+            $curso = $this->preseleccionadoModel->obtenerUnicoCurCertPreseleccionado($pre_cur_cert["id_prese_curs_certi"]);
+
+            if ($respuesta) {
+                echo ApiRespuesta::exitoso($curso, "Preseleccionado guarda con curso/certificado");
+            } else {
+                echo ApiRespuesta::error("No se pudo actualizar el curso/certificado del preseleccionado");
+            }
+        } catch (Exception $e) {
+            echo ApiRespuesta::error("Error inesperado al guardar preseleccionado con el curso/certificado.");
         }
     }
 }

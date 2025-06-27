@@ -29,18 +29,91 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" data-bs-target="#requerimientoModal" data-bs-toggle="modal">
-                    Agregar candidato
+                <button class="btn btn-primary" data-bs-target="#formularioCandidatoModal" data-bs-toggle="modal">
+                    Registrar nuevo candidato
                 </button>
             </div>
         </div>
     </div>
 </div>
 
+
+<div class="modal fade" id="formularioCandidatoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="formularioCandidatoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formularioCandidatoModalLabel">
+                    Nuevo candidato
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" id="formularioNuevoCandidato">
+                    <div class="row row-gap-3">
+                        <div class="col-lg-4">
+                            <label class="form-label" for="txtApellidosNombres">Apellidos y nombres</label>
+                            <input class="form-control border-dark" placeholder="Apellidos y nombres" type="text"
+                                id="txtApellidosNombres" />
+                        </div>
+                        <div class="col-lg-2">
+                            <label class="form-label" for="txtDocumento">Documento</label>
+                            <input class="form-control  border-dark" placeholder="DNI" type="text" id="txtDocumento" />
+                        </div>
+                        <div class="col-lg-3">
+                            <label class="form-label" for="txtFechaDeNacimiento">Fecha de nacimiento</label>
+                            <input class="form-control  border-dark" placeholder="" type="date"
+                                id="txtFechaDeNacimiento" />
+                        </div>
+                        <div class="col-lg-3">
+                            <label class="form-label" for="txtEdad">Edad</label>
+                            <input class="form-control  border-dark" placeholder="Edad" type="number" id="txtEdad" />
+                        </div>
+                        <div class="col-lg-2">
+                            <label class="form-label" for="txtExactian">Exactian</label>
+                            <input class="form-control  border-dark" placeholder="Exactian" type="text"
+                                id="txtExactian" />
+                        </div>
+                        <div class="col-lg-2">
+                            <label class="form-label" for="txtTelefono1">Teléfono 1</label>
+                            <input class="form-control  border-dark" placeholder="Teléfono 1" type="text"
+                                id="txtTelefono1" />
+                        </div>
+                        <div class="col-lg-2">
+                            <label class="form-label" for="txtTelefono2">Teléfono 2</label>
+                            <input class="form-control  border-dark" placeholder="Teléfono 2" type="text"
+                                id="txtTelefono2" />
+                        </div>
+                        <div class="col-lg-3">
+                            <label class="form-label" for="txtEmail">Email</label>
+                            <input class="form-control  border-dark" placeholder="Ingresar email" type="email"
+                                id="txtEmail" />
+                        </div>
+                        <div class="col-lg-3">
+                            <label class="form-label" for="txtDepartamentoResidencia">Departamento de
+                                residencia</label>
+                            <input class="form-control  border-dark" placeholder="Ingresar departamento" type="text"
+                                id="txtDepartamentoResidencia" />
+                        </div>
+                    </div>
+
+                    <div class="my-4 d-flex justify-content-end w-100">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-floppy"></i>
+                            Guardar todos los cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 <!-- Modal -->
 <div class="modal fade" id="requerimientoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="requerimientoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog modal-xl">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="requerimientoModalLabel">
@@ -103,48 +176,48 @@
                             <div class="col-lg-4">
                                 <label class="form-label" for="txtApellidosNombres">Apellidos y nombres</label>
                                 <input class="form-control border-dark" placeholder="Apellidos y nombres" type="text"
-                                    id="txtApellidosNombres" />
+                                    id="txtApellidosNombresActualizar" />
                             </div>
                             <div class="col-lg-2">
                                 <label class="form-label" for="txtDocumento">Documento</label>
                                 <input class="form-control  border-dark" placeholder="DNI" type="text"
-                                    id="txtDocumento" />
+                                    id="txtDocumentoActualizar" />
                             </div>
                             <div class="col-lg-3">
                                 <label class="form-label" for="txtFechaDeNacimiento">Fecha de nacimiento</label>
                                 <input class="form-control  border-dark" placeholder="" type="date"
-                                    id="txtFechaDeNacimiento" />
+                                    id="txtFechaDeNacimientoActualizar" />
                             </div>
                             <div class="col-lg-3">
                                 <label class="form-label" for="txtEdad">Edad</label>
                                 <input class="form-control  border-dark" placeholder="Edad" type="number"
-                                    id="txtEdad" />
+                                    id="txtEdadActualizar" />
                             </div>
                             <div class="col-lg-2">
                                 <label class="form-label" for="txtExactian">Exactian</label>
                                 <input class="form-control  border-dark" placeholder="Exactian" type="text"
-                                    id="txtExactian" />
+                                    id="txtExactianActualizar" />
                             </div>
                             <div class="col-lg-2">
                                 <label class="form-label" for="txtTelefono1">Teléfono 1</label>
                                 <input class="form-control  border-dark" placeholder="Teléfono 1" type="text"
-                                    id="txtTelefono1" />
+                                    id="txtTelefono1Actualizar" />
                             </div>
                             <div class="col-lg-2">
                                 <label class="form-label" for="txtTelefono2">Teléfono 2</label>
                                 <input class="form-control  border-dark" placeholder="Teléfono 2" type="text"
-                                    id="txtTelefono2" />
+                                    id="txtTelefono2Actualizar" />
                             </div>
                             <div class="col-lg-3">
                                 <label class="form-label" for="txtEmail">Email</label>
                                 <input class="form-control  border-dark" placeholder="Ingresar email" type="email"
-                                    id="txtEmail" />
+                                    id="txtEmailActualizar" />
                             </div>
                             <div class="col-lg-3">
                                 <label class="form-label" for="txtDepartamentoResidencia">Departamento de
                                     residencia</label>
                                 <input class="form-control  border-dark" placeholder="Ingresar departamento" type="text"
-                                    id="txtDepartamentoResidencia" />
+                                    id="txtDepartamentoResidenciaActualizar" />
                             </div>
 
                             <div class="col-lg-12">
@@ -304,18 +377,7 @@
                                                 <th></th>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td class="">Certificacion</td>
-                                                    <td class="">2/10/2024</td>
-                                                    <td class="">2/10/2025</td>
-                                                    <td>
-                                                        <span class="badge text-bg-success">Vigente</span>
-                                                    </td>
-                                                    <td>
-                                                        <i class="bi bi-pencil"></i>
-                                                        <i class="bi bi-trash"></i>
-                                                    </td>
-                                                </tr>
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -341,7 +403,7 @@
                                 </div>
                                 <div class="my-1 p-1">
                                     <div class="table-responsive">
-                                        <table class="table table-hover" id="tblCursosPreseleccionado">
+                                        <table class="table" id="tblCursosPreseleccionado">
                                             <thead class="">
                                                 <th>Nombre</th>
                                                 <th>Inicio</th>
@@ -350,46 +412,7 @@
                                                 <th></th>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td class="">Curso CBS/PTEHS</td>
-                                                    <td class="">2/10/2024</td>
-                                                    <td class="">2/10/2025</td>
-                                                    <td>
-                                                        <span class="badge text-bg-success">Vigente</span>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Espacios confinados</td>
-                                                    <td>11/04/2023</td>
-                                                    <td>11/04/2025</td>
-                                                    <td>
-                                                        <span class="badge text-bg-danger">Caducó</span>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Curso repsol</td>
-                                                    <td>11/04/2023</td>
-                                                    <td>11/04/2025</td>
-                                                    <td>
-                                                        <span class="badge text-bg-danger">Caducó</span>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>CURSO.CBS/TOP/AACC.INDUC</td>
-                                                    <td>11/04/2023</td>
-                                                    <td>11/04/2025</td>
-                                                    <td>
-                                                        <span class="badge text-bg-danger">Caducó</span>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>CURSO.ALT/E.CONF/EXC/BLOQ/COT</td>
-                                                    <td>11/04/2023</td>
-                                                    <td>11/04/2025</td>
-                                                    <td>
-                                                        <span class="badge text-bg-danger">Caducó</span>
-                                                    </td>
-                                                </tr>
+                                                
                                             </tbody>
                                         </table>
                                     </div>
@@ -442,13 +465,11 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     Cerrar
                 </button>
-                <button class="btn btn-success" id="btnGuardarInformacionCandidato">
+                <!-- <button class="btn btn-success" id="btnGuardarInformacionCandidato">
                     <i class="bi bi-floppy"></i>
                     Guardar todos los cambios
-                </button>
+                </button> -->
             </div>
         </div>
     </div>
 </div>
-
-<script src="<?= BASE_URL ?>views/js/status/agregarPreseleccionado.js"></script>

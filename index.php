@@ -70,7 +70,23 @@ $router->map('GET', '/api/obtenerCursosCertificaciones', function() {
     $controller->apiObtenerCurCert();
 });
 
+$router->map('POST', '/api/buscarDetallePreseleccionado', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiBuscarDetallePreseleccionado();
+});
 
+$router->map('POST', '/api/guardarCurCertPreseleccionado', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiGuardarCurCertPreseleccionado();
+});
+
+$router->map('POST', '/api/actualizarCurCertPreseleccionado', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiActualizarCurCertPreseleccionado();
+});
 
 $match = $router->match();
 

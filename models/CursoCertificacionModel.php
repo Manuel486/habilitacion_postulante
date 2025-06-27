@@ -54,4 +54,21 @@ class CursoCertificacionModel
             return [];
         }
     }
+
+    public function obtenerCursoCertPorId($id_curso_certificacion){
+        $pdo = ConexionDocumentos::getInstancia()->getConexion();
+        try {
+            $sql = "SELECT * FROM curso_certificacion WHERE id_curso_certificacion=:id_curso_certificacion";
+
+            $statement = $pdo->prepare($sql);
+            $statement->execute([
+                ":id_curso_certificacion" => $id_curso_certificacion
+            ]);
+            return $statement->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+   
 }
