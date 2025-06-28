@@ -8,6 +8,20 @@ class PreseleccionadoModel
     {
     }
 
+    public function obtenerPreseleccionados(){
+        $pdo = ConexionDocumentos::getInstancia()->getConexion();
+        try {
+            $sql = "SELECT p.* FROM preseleccionado AS p";
+
+            $statement = $pdo->prepare($sql);
+            $statement->execute();
+
+            return $statement->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
+        }
+    }
+
     public function obtenerPorDocumento($documento)
     {
         $pdo = ConexionDocumentos::getInstancia()->getConexion();

@@ -98,7 +98,7 @@
                     </div>
 
                     <div class="my-4 d-flex justify-content-end w-100">
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-success" id="btnGuardarInformacionCandidato">
                             <i class="bi bi-floppy"></i>
                             Guardar todos los cambios
                         </button>
@@ -117,7 +117,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="requerimientoModalLabel">
-                    Agregar candidato
+                    Actualizar datos
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -270,80 +270,29 @@
                         <div class="row">
                             <div class="p-2">
                                 <div class="col-lg-8">
-                                    <label class="form-label" for="">Ingresar nuevo proyecto</label>
+                                    <label class="form-label" for="">Ingresar nombre del proyecto</label>
                                     <div class="d-flex gap-2">
                                         <input type="text" class="form-control  border-dark"
                                             placeholder="Nombre del proyecto" />
                                         <button class="btn btn-outline-dark d-flex gap-2">
                                             <i class="bi bi-search"></i>Buscar
                                         </button>
-                                        <button class="btn btn-outline-dark d-flex gap-2">
+                                        <!-- <button class="btn btn-outline-dark d-flex gap-2">
                                             <i class="bi bi-plus-circle"></i>Agregar
-                                        </button>
+                                        </button> -->
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-hover">
+                                    <table class="table table-hover" id="tblProyectosPreseleccionado">
                                         <thead class="">
                                             <th>Proyecto</th>
+                                            <th>Cargo</th>
                                             <th>Fecha de ingreso</th>
                                             <th>Fecha de cese</th>
                                             <th>Observación</th>
-                                            <th>Corregida</th>
-                                            <th></th>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td class="">
-                                                    <input type="text" class="form-control  border-dark"
-                                                        placeholder="Ingresar el nombre del proyecto" />
-                                                </td>
-                                                <td class="">
-                                                    <input type="date" class="form-control  border-dark" />
-                                                </td>
-                                                <td class="">
-                                                    <input type="date" class="form-control  border-dark" />
-                                                </td>
-                                                <td class="">
-                                                    <input type="text" class="form-control  border-dark"
-                                                        placeholder="Ingresar observación del proyecto" />
-                                                </td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="">Proyecto 3</td>
-                                                <td class="">21/01/2025</td>
-                                                <td class="">----</td>
-                                                <td class="">
-                                                    <p class="bg-danger p-1 rounded text-white">
-                                                        No fue admitido
-                                                    </p>
-                                                </td>
-                                                <td class="">
-                                                    <div
-                                                        class="w-100 h-100 d-flex justify-content-center align-items-center">
-                                                        <input type="checkbox" class="form-check" />
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <i class="bi bi-pencil"></i>
-                                                    <i class="bi bi-trash"></i>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="">Proyecto 3</td>
-                                                <td class="">09/06/2024</td>
-                                                <td class="">05/06/2024</td>
-                                                <td class="">Sin observación</td>
-                                                <td class="d-flex justify-content-center">
-                                                    <input type="checkbox" class="form-check" />
-                                                </td>
-                                                <td>
-                                                    <i class="bi bi-pencil"></i>
-                                                    <i class="bi bi-trash"></i>
-                                                </td>
-                                            </tr>
+                                            
                                         </tbody>
                                     </table>
                                 </div>
@@ -465,10 +414,6 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     Cerrar
                 </button>
-                <!-- <button class="btn btn-success" id="btnGuardarInformacionCandidato">
-                    <i class="bi bi-floppy"></i>
-                    Guardar todos los cambios
-                </button> -->
             </div>
         </div>
     </div>

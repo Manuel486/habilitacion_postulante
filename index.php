@@ -9,6 +9,7 @@ define("BASE_URL", "/habilitacion_postulante/");
 define("MODELS_PATH",__DIR__."/models"); 
 define("CONTROLLERS_PATH",__DIR__."/controllers");
 define("DATABASE_PATH",__DIR__."/database");
+define("STATUS_PATH",__DIR__."/status");
 
 $router = new AltoRouter();
 $router->setBasePath("/habilitacion_postulante");
@@ -86,6 +87,18 @@ $router->map('POST', '/api/actualizarCurCertPreseleccionado', function() {
     require_once CONTROLLERS_PATH.'/ProyectosController.php';
     $controller = new ProyectosController();
     $controller->apiActualizarCurCertPreseleccionado();
+});
+
+$router->map('POST', '/api/obtenerHistorialProyectos', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiObtenerHistorialProyectos();
+});
+
+$router->map('GET', '/api/generarExcelStatus', function() {
+    require_once CONTROLLERS_PATH.'/GenerarStatusController.php';
+    $controller = new GenerarStatusController();
+    $controller->generarExcelStatus();
 });
 
 $match = $router->match();

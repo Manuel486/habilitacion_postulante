@@ -116,10 +116,10 @@ class ProyectosController
 
             $preseleccionado = $this->preseleccionadoModel->obtenerPorDocumento($documento);
 
-            if($preseleccionado){
+            if ($preseleccionado) {
                 $this->preseleccionadoModel->insertarCandidatoProyecto($idRequerimiento, $preseleccionado["id_preseleccionado"]);
             }
-            
+
             if ($preseleccionado) {
                 echo ApiRespuesta::exitoso($preseleccionado, "Persona encontrada");
             } else {
@@ -222,15 +222,15 @@ class ProyectosController
             $pre_cur_cert["id_prese_curs_certi"] = uniqid("PRECC");
 
 
-            $curso = $this->curso_certificacionModel->obtenerCursoCertPorId($pre_cur_cert["id_curs_certi"]);
+            $curso_certificado = $this->curso_certificacionModel->obtenerCursoCertPorId($pre_cur_cert["id_curs_certi"]);
 
             $fecha_inicio = $pre_cur_cert["fecha_inicio"];
 
-            $fecha_fin = date("Y-m-d", strtotime("+".$curso["duracion"]." month", strtotime($fecha_inicio)));
+            $fecha_fin = date("Y-m-d", strtotime("+" . $curso_certificado["duracion"] . " month", strtotime($fecha_inicio)));
 
             $pre_cur_cert["fecha_fin"] = $fecha_fin;
-            $pre_cur_cert["nombre_curso"] = $curso["nombre"];
-            $pre_cur_cert["id_curso"] = $curso["id_curso_certificacion"];
+            $pre_cur_cert["nombre_curso"] = $curso_certificado["nombre"];
+            $pre_cur_cert["id_curso"] = $curso_certificado["id_curso_certificacion"];
 
             $respuesta = $this->preseleccionadoModel->guardarCurCertPreseleccionado($pre_cur_cert);
 
@@ -264,10 +264,10 @@ class ProyectosController
 
             $fecha_inicio = $pre_cur_cert["fecha_inicio"];
 
-            $fecha_fin = date("Y-m-d", strtotime("+".$cursoInfo["duracion"]." month", strtotime($fecha_inicio)));
+            $fecha_fin = date("Y-m-d", strtotime("+" . $cursoInfo["duracion"] . " month", strtotime($fecha_inicio)));
 
             $pre_cur_cert["fecha_fin"] = $fecha_fin;
-            
+
             $respuesta = $this->preseleccionadoModel->actualizarCurCertPreseleccionado($pre_cur_cert);
 
             $curso = $this->preseleccionadoModel->obtenerUnicoCurCertPreseleccionado($pre_cur_cert["id_prese_curs_certi"]);
@@ -281,4 +281,44 @@ class ProyectosController
             echo ApiRespuesta::error("Error inesperado al guardar preseleccionado con el curso/certificado.");
         }
     }
+
+    public function apiObtenerHistorialProyectos()
+    {
+        $documento = $_POST["documento"];
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'http://sicalsepcon.net/api/mantenimiento/loginMMTO.php',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode(['usuario' => 'prueba']),
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        $data = json_decode($response, true);
+        $token = $data['token'] ?? null;
+
+        if (!$token) {
+            echo "Error: No se pudo obtener el token.";
+            return;
+        }
+
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "http://sicalsepcon.net/api/historicoapi_new.php?documento=$documento",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => [
+                "Authorization: Bearer $token"
+            ],
+        ));
+
+        $historial = curl_exec($curl);
+        curl_close($curl);
+
+        echo $historial;
+    }
+
 }
