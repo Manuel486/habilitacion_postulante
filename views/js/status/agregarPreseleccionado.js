@@ -216,10 +216,13 @@ const obtenerCursosCertificaciones = async () => {
     certificaciones = data.respuesta.filter((elemento) => {
       return elemento.tipo == "certificado";
     });
+    console.log(data);
   } catch (error) {
     console.error(error);
   }
 };
+
+obtenerCursosCertificaciones();
 
 function llenarCamposDatosGenerales(candidato) {
   const txtApellidosNombres = document.getElementById(
@@ -613,3 +616,9 @@ const modalElement = document.getElementById("requerimientoModal");
 modalElement.addEventListener("hidden.bs.modal", function () {
   modalElement.innerHTML = estadoInicialModal;
 });
+
+
+async function exportarStatusPorRequerimiento(idRequerimiento) {
+  document.getElementById("inputRequerimientoExcel").value = idRequerimiento;
+  document.getElementById("formExcel").submit();
+}

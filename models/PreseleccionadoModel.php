@@ -4,23 +4,81 @@ require_once DATABASE_PATH . "/conexionDocumentos.php";
 
 class PreseleccionadoModel
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
-    public function obtenerPreseleccionados(){
+    public function obtenerPreseleccionados($idRequerimiento)
+    {
         $pdo = ConexionDocumentos::getInstancia()->getConexion();
         try {
-            $sql = "SELECT p.* FROM preseleccionado AS p";
+            // Paso 1: Generar columnas dinámicas de cursos (si existen)
+            $sqlCols = "
+            SELECT GROUP_CONCAT(DISTINCT
+                CONCAT(
+                    'MAX(CASE WHEN cc.nombre = ''',
+                    cc.nombre,
+                    ''' THEN DATE_FORMAT(pcc.fecha_inicio, \"%Y-%m-%d\") END) AS `',
+                    cc.nombre,
+                    '`'
+                )
+            ) AS columnas
+            FROM curso_certificacion cc
+        ";
 
-            $statement = $pdo->prepare($sql);
-            $statement->execute();
+            $stmtCols = $pdo->query($sqlCols);
+            $columnasCursos = $stmtCols->fetchColumn();
 
-            return $statement->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
+            // Si no hay cursos, las columnas serán vacías
+            $columnasCursos = $columnasCursos ?: ""; // Asigna cadena vacía si no hay resultados
+
+            // Paso 2: Armar la consulta base + columnas dinámicas si existen
+            $sql = "
+            SELECT
+                rp.id_requerimiento,
+                rp.fecha_requerimiento,
+                rp.numero_requerimiento,
+                rp.tipo_requerimiento,
+                rp.id_fase,
+                rp.id_cargo,
+                rp.cantidad,
+                rp.regimen,
+                p.apellidos_nombres,
+                p.documento,
+                p.fecha_nacimiento,
+                p.edad,
+                p.exactian,
+                p.fecha_ingreso_ultimo_proyecto,
+                p.fecha_cese_ultimo_proyecto,
+                p.nombre_ultimo_proyecto,
+                p.telefono_1,
+                p.telefono_2,
+                p.email
+                " . ($columnasCursos ? ", $columnasCursos" : "") . "
+            FROM preseleccionado_requerimiento pr
+            LEFT JOIN requerimiento_proyecto rp ON rp.id_requerimiento = pr.id_reque_proy
+            LEFT JOIN preseleccionado p ON p.id_preseleccionado = pr.id_preseleccionado
+            LEFT JOIN preseleccionado_curso_certificacion pcc ON pcc.id_preseleccionado = p.id_preseleccionado
+            LEFT JOIN curso_certificacion cc ON cc.id_curso_certificacion = pcc.id_curs_certi
+            WHERE pr.id_reque_proy = :id_requerimiento
+            GROUP BY rp.id_requerimiento, p.id_preseleccionado
+        ";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                "id_requerimiento" => $idRequerimiento
+            ]);
+            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($resultados)) {
+                echo "No hay datos para exportar.";
+            }
+
+            return $resultados;
+        } catch (Exception $e) {
+            echo "Error: " . $e->getMessage();
             return [];
         }
     }
+
 
     public function obtenerPorDocumento($documento)
     {
@@ -203,8 +261,7 @@ class PreseleccionadoModel
         try {
             $sql = "SELECT pcc.*, cc.nombre
                     FROM preseleccionado_curso_certificacion AS pcc
-                    LEFT JOIN curso_certificacion AS cc 
-                    ON cc.id_curso_certificacion = pcc.id_curs_certi
+                    LEFT JOIN curso_certificacion AS cc ON cc.id_curso_certificacion = pcc.id_curs_certi
                     WHERE pcc.id_preseleccionado = :id_preseleccionado AND cc.tipo=:tipo
                     ORDER BY pcc.fecha_registro DESC";
 

@@ -88,7 +88,7 @@
                     <div class="p-3 border rounded shadow-sm bg-body">
                       <div class="d-flex justify-content-between align-items-center my-2">
                         <h6 class="text-primary fw-bold mb-3">👥 Personas asignadas:</h6>
-                        <button class="btn btn-outline-success">
+                        <button class="btn btn-outline-success" onClick="exportarStatusPorRequerimiento('<?= $requerimiento["id_requerimiento"] ?>')">
                           <i class="bi bi-file-earmark-excel-fill"></i> Exportar
                         </button>
                       </div>
@@ -143,6 +143,11 @@
       </div>
     </div>
   </div>
+
+  <form id="formExcel" action="api/generarExcelStatus" method="POST" style="display: none;">
+    <input type="hidden" name="id_requerimiento" id="inputRequerimientoExcel">
+  </form>
+
 
   <?php include_once "agregarPreseleccionado.php"; ?>
   <?php include_once "formularioRequerimiento.php"; ?>

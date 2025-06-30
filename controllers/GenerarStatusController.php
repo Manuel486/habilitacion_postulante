@@ -18,7 +18,8 @@ class GenerarStatusController
     public function generarExcelStatus()
     {
         try {
-            $data = $this->preseleccionadoModel->obtenerPreseleccionados();
+            $id_requerimiento = $_POST["id_requerimiento"];
+            $data = $this->preseleccionadoModel->obtenerPreseleccionados($id_requerimiento);
 
             if (empty($data)) {
                 echo "No hay datos para exportar.";

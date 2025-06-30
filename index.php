@@ -95,7 +95,7 @@ $router->map('POST', '/api/obtenerHistorialProyectos', function() {
     $controller->apiObtenerHistorialProyectos();
 });
 
-$router->map('GET', '/api/generarExcelStatus', function() {
+$router->map('POST', '/api/generarExcelStatus', function() {
     require_once CONTROLLERS_PATH.'/GenerarStatusController.php';
     $controller = new GenerarStatusController();
     $controller->generarExcelStatus();
