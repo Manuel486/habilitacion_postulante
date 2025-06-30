@@ -42,7 +42,7 @@ class GenerarStatusController
 
             // Escribir encabezados
             foreach ($headers as $colIndex => $header) {
-                $cell = chr(65 + $colIndex) . '1'; // A, B, C...
+                $cell = chr(65 + $colIndex) . '1';
                 $sheet->setCellValue($cell, strtoupper($header));
                 $sheet->getStyle($cell)->applyFromArray($headerStyle);
             }

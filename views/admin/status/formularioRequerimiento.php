@@ -4,7 +4,7 @@
     aria-labelledby="modalFormularioRequerimientoLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <div class="modal-header encabezado">
+            <div class="modal-header encabezado text-white">
                 <h1 class="modal-title fs-5" id="modalFormularioRequerimientoLabel">Nuevo requerimiento</h1>
                 <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>

@@ -1,24 +1,28 @@
-const btnBuscarCandidato = document.getElementById("btnBuscarCandidato");
-const btnGuardarInformacionCandidato = document.getElementById(
-  "btnGuardarInformacionCandidato"
+const btnBuscarPreseleccionado = document.getElementById(
+  "btnBuscarPreseleccionado"
+);
+const btnGuardarInformacionPreseleccionado = document.getElementById(
+  "btnGuardarInformacionPreseleccionado"
 );
 const btnAgregarCurso = document.getElementById("btnAgregarCurso");
 const btnAgregarCertificacion = document.getElementById(
   "btnAgregarCertificacion"
 );
 
-let idCandidatoExiste = "";
+let idPreseleccionado = "";
 let idRequerimiento = null;
-const txtDocumentoCandidato = document.getElementById("txtDocumentoCandidato");
+const txtDocumentoPreseleccionado = document.getElementById(
+  "txtDocumentoPreseleccionado"
+);
 
-btnBuscarCandidato.addEventListener("click", async () => {
-  if (!camposValidosBuscarCandidato()) return;
+btnBuscarPreseleccionado.addEventListener("click", async () => {
+  if (!camposValidosBuscarPreseleccionado()) return;
 
-  btnBuscarCandidato.disabled = true;
-  btnBuscarCandidato.textContent = "Guardando...";
+  btnBuscarPreseleccionado.disabled = true;
+  btnBuscarPreseleccionado.textContent = "Agregando...";
 
   let formData = new FormData();
-  formData.append("documento", txtDocumentoCandidato.value.trim());
+  formData.append("documento", txtDocumentoPreseleccionado.value.trim());
   formData.append("id_requerimiento", idRequerimiento);
 
   try {
@@ -35,7 +39,7 @@ btnBuscarCandidato.addEventListener("click", async () => {
       Swal.fire({
         title: "Éxito",
         icon: "success",
-        text: "Candidato agregado con éxito",
+        text: data.mensaje,
         timer: 2000,
         showConfirmButton: false,
         timerProgressBar: true,
@@ -43,25 +47,25 @@ btnBuscarCandidato.addEventListener("click", async () => {
     } else {
       alertaBusquedaDocumento.innerHTML = `
         <div class="alert alert-warning" role="alert">
-            Persona no encontrada.
+          ${data.mensaje}
         </div>
       `;
-      idCandidatoExiste = "";
+      idPreseleccionado = "";
     }
   } catch (error) {
     console.error(error);
-    idCandidatoExiste = "";
+    idPreseleccionado = "";
   } finally {
-    btnBuscarCandidato.disabled = false;
-    btnBuscarCandidato.textContent = "Buscar";
+    btnBuscarPreseleccionado.disabled = false;
+    btnBuscarPreseleccionado.textContent = "Agregar";
   }
 });
 
-const guardarNuevoCandidato = async () => {
-  if (!camposValidosAgregarCandidato()) return;
+const guardarNuevoPreseleccionado = async () => {
+  if (!camposValidosAgregarPreseleccionado()) return;
 
-  btnGuardarInformacionCandidato.disabled = true;
-  btnGuardarInformacionCandidato.textContent = "Guardando...";
+  btnGuardarInformacionPreseleccionado.disabled = true;
+  btnGuardarInformacionPreseleccionado.textContent = "Guardando...";
 
   try {
     const txtApellidosNombres = document.getElementById("txtApellidosNombres");
@@ -78,7 +82,7 @@ const guardarNuevoCandidato = async () => {
       "txtDepartamentoResidencia"
     );
 
-    let candidato = {
+    let preseleecionado = {
       apellidos_nombres: txtApellidosNombres.value,
       documento: txtDocumento.value,
       fecha_nacimiento: txtFechaDeNacimiento.value,
@@ -94,11 +98,11 @@ const guardarNuevoCandidato = async () => {
     };
 
     let formData = new FormData();
-    formData.append("preseleccionado", JSON.stringify(candidato));
+    formData.append("preseleccionado", JSON.stringify(preseleecionado));
     formData.append("id_requerimiento", idRequerimiento);
-    formData.append("id_preseleccionado", idCandidatoExiste);
+    formData.append("id_preseleccionado", idPreseleccionado);
 
-    const resp = await fetch("api/guardarInformacionCandidato", {
+    const resp = await fetch("api/guardarInformacionPreseleccionado", {
       method: "POST",
       body: formData,
     });
@@ -114,17 +118,21 @@ const guardarNuevoCandidato = async () => {
         timerProgressBar: true,
       }).then(() => location.reload());
     } else {
-      console.error("No se pudo guardar");
+      Swal.fire({
+        icon: "error",
+        title: "Error al cargar datos",
+        text: data.mensaje,
+      });
     }
   } catch (error) {
     console.error(error);
   } finally {
-    btnGuardarInformacionCandidato.disabled = false;
-    btnGuardarInformacionCandidato.textContent = "Guardar";
+    btnGuardarInformacionPreseleccionado.disabled = false;
+    btnGuardarInformacionPreseleccionado.textContent = "Guardar";
   }
 };
 
-function camposValidosAgregarCandidato() {
+function camposValidosAgregarPreseleccionado() {
   let campos = [
     "txtApellidosNombres",
     "txtDocumento",
@@ -150,10 +158,10 @@ function camposValidosAgregarCandidato() {
   return validacion;
 }
 
-formularioNuevoCandidato.addEventListener("submit", async (e) => {
+formularioNuevoPreseleccionado.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  guardarNuevoCandidato();
+  guardarNuevoPreseleccionado();
 });
 
 function cambiarIdRequerimiento(nuevoIdRequerimiento) {
@@ -163,8 +171,11 @@ function cambiarIdRequerimiento(nuevoIdRequerimiento) {
 let cursos = [];
 let certificaciones = [];
 
-async function cargarDatosPreseleccionado(idPreseleccionado, idRequerimientoPreseleccionado) {
-  idCandidatoExiste = idPreseleccionado;
+async function cargarDatosPreseleccionado(
+  nuevoIdPreseleccionado,
+  idRequerimientoPreseleccionado
+) {
+  idPreseleccionado = nuevoIdPreseleccionado;
   idRequerimiento = idRequerimientoPreseleccionado;
 
   try {
@@ -178,6 +189,7 @@ async function cargarDatosPreseleccionado(idPreseleccionado, idRequerimientoPres
 
     const formData = new FormData();
     formData.append("id_preseleccionado", idPreseleccionado);
+    formData.append("id_requerimiento", idRequerimiento);
 
     const resp = await fetch("api/buscarDetallePreseleccionado", {
       method: "POST",
@@ -186,7 +198,9 @@ async function cargarDatosPreseleccionado(idPreseleccionado, idRequerimientoPres
 
     const data = await resp.json();
 
+    llenarCamposAlertasCurCert(data.respuesta.alertas_cur_cert);
     llenarCamposDatosGenerales(data.respuesta);
+    llenarInformacionPreReque(data.respuesta.preseleccionado_requerimiento[0]);
     llenarCamposCursosCertificados(data.respuesta.cursos, "curso");
     llenarCamposCursosCertificados(data.respuesta.certificados, "certificado");
 
@@ -203,7 +217,6 @@ async function cargarDatosPreseleccionado(idPreseleccionado, idRequerimientoPres
   }
 }
 
-
 const obtenerCursosCertificaciones = async () => {
   try {
     const resp = await fetch("api/obtenerCursosCertificaciones", {
@@ -216,7 +229,6 @@ const obtenerCursosCertificaciones = async () => {
     certificaciones = data.respuesta.filter((elemento) => {
       return elemento.tipo == "certificado";
     });
-    console.log(data);
   } catch (error) {
     console.error(error);
   }
@@ -224,7 +236,32 @@ const obtenerCursosCertificaciones = async () => {
 
 obtenerCursosCertificaciones();
 
-function llenarCamposDatosGenerales(candidato) {
+function llenarCamposAlertasCurCert(alertas_cur_cert){
+  const alertasPreseleccionado = document.getElementById("alertasPreseleccionado");
+  alertasPreseleccionado.innerHTML = "";
+
+  alertas = alertas_cur_cert.filter(alerta => (
+    alerta.estado == "caduco" || alerta.estado == "cerca"
+  ));
+
+  if(alertas.length < 0) return;
+
+  alertas.forEach(alerta => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <div class="alert alert-${alerta.estado == "caduco" ? "danger":"warning"} fw-6" role="alert">
+          ${
+            alerta.estado == "caduco" ?
+              `El ${alerta.nombre} ya caducó`:
+              `El ${alerta.nombre} esta cerca a caducar`
+          }
+      </div>
+    `;
+    alertasPreseleccionado.append(div);
+  })
+}
+
+function llenarCamposDatosGenerales(preseleccionado) {
   const txtApellidosNombres = document.getElementById(
     "txtApellidosNombresActualizar"
   );
@@ -241,15 +278,37 @@ function llenarCamposDatosGenerales(candidato) {
     "txtDepartamentoResidenciaActualizar"
   );
 
-  txtApellidosNombres.value = candidato.apellidos_nombres;
-  txtDocumento.value = candidato.documento;
-  txtFechaDeNacimiento.value = candidato.fecha_nacimiento;
-  txtEdad.value = candidato.edad;
-  txtExactian.value = candidato.exactian;
-  txtTelefono1.value = candidato.telefono_1;
-  txtTelefono2.value = candidato.telefono_2;
-  txtEmail.value = candidato.email;
-  txtDepartamentoResidencia.value = candidato.departamento_residencia;
+  txtApellidosNombres.value = preseleccionado.apellidos_nombres;
+  txtDocumento.value = preseleccionado.documento;
+  txtFechaDeNacimiento.value = preseleccionado.fecha_nacimiento;
+  txtEdad.value = preseleccionado.edad;
+  txtExactian.value = preseleccionado.exactian;
+  txtTelefono1.value = preseleccionado.telefono_1;
+  txtTelefono2.value = preseleccionado.telefono_2;
+  txtEmail.value = preseleccionado.email;
+  txtDepartamentoResidencia.value = preseleccionado.departamento_residencia;
+}
+
+function llenarInformacionPreReque(pre_reque) {
+  const txtPoliza = document.getElementById("txtPoliza");
+  const txtViabilidad = document.getElementById("txtViabilidad");
+  const txtObservacion = document.getElementById("txtObservacion");
+  const txtIngresoObra = document.getElementById("txtIngresoObra");
+  const txtEstado = document.getElementById("txtEstado");
+  const txtObservacion2 = document.getElementById("txtObservacion2");
+  const txtAlfa = document.getElementById("txtAlfa");
+  const txtViabilidad2 = document.getElementById("txtViabilidad2");
+  const txtRRHH = document.getElementById("txtRRHH");
+
+  txtPoliza.value = pre_reque.poliza;
+  txtViabilidad.value = pre_reque.viabilidad;
+  txtObservacion.value = pre_reque.observacion;
+  txtIngresoObra.value = pre_reque.ingreso_obra;
+  txtEstado.value = pre_reque.estado;
+  txtObservacion2.value = pre_reque.observacion2;
+  txtAlfa.value = pre_reque.alfa;
+  txtViabilidad2.value = pre_reque.viabilidad2;
+  txtRRHH.value = pre_reque.rrhh;
 }
 
 function llenarCamposCursosCertificados(items, tipo) {
@@ -279,7 +338,7 @@ function llenarCamposCursosCertificados(items, tipo) {
         <button class="btn btn-outline btn-outline-warning border-dark btn-editar">
           <i class="bi bi-pencil-fill"></i>
         </button>
-        <button class="btn btn-outline btn-outline-danger border-dark">
+        <button class="btn btn-outline btn-outline-danger border-dark btn-eliminar">
           <i class="bi bi-trash-fill"></i>
         </button>
       </td>
@@ -296,6 +355,55 @@ function llenarCamposCursosCertificados(items, tipo) {
       editarCursoCertificado(fila, datos, tipo);
     });
   });
+
+  document.querySelectorAll(`${selectorTabla} .btn-eliminar`).forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const fila = btn.closest("tr");
+      const datos = JSON.parse(fila.dataset[tipo]);
+      eliminarCursoCertificado(fila, datos, tipo, btn);
+    });
+  });
+}
+
+async function eliminarCursoCertificado(fila, item, tipo, btnEliminar) {
+  try {
+    btnEliminar.disabled = true;
+    btnEliminar.textContent = "Eliminando...";
+
+    let formData = new FormData();
+    formData.append("id_prese_curs_certi", item.id_prese_curs_certi);
+
+    const resp = await fetch("api/eliminarCursCertPreseleccionado", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await resp.json();
+
+    if (data.exitoso) {
+      Swal.fire({
+        icon: "success",
+        title: "Éxito",
+        text: data.mensaje,
+      });
+      fila.remove();
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error al realizar la acción",
+        text: data.mensaje,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    Swal.fire({
+      icon: "error",
+      title: "Error al realizar la acción",
+      text: data.mensaje,
+    });
+  } finally {
+    btnEliminar.disabled = false;
+    btnEliminar.textContent = "Eliminar";
+  }
 }
 
 function editarCursoCertificado(fila, item, tipo) {
@@ -330,7 +438,7 @@ function editarCursoCertificado(fila, item, tipo) {
         <button class="btn btn-outline btn-outline-warning border-dark btn-editar">
           <i class="bi bi-pencil-fill"></i>
         </button>
-        <button class="btn btn-outline btn-outline-danger border-dark">
+        <button class="btn btn-outline btn-outline-danger border-dark btn-eliminar">
           <i class="bi bi-trash-fill"></i>
         </button>
       </td>
@@ -338,6 +446,14 @@ function editarCursoCertificado(fila, item, tipo) {
     fila.dataset[tipo] = JSON.stringify(obj);
     fila.querySelector(".btn-editar").addEventListener("click", () => {
       editarCursoCertificado(fila, obj, tipo);
+    });
+    fila.querySelector(".btn-eliminar").addEventListener("click", () => {
+      eliminarCursoCertificado(
+        fila,
+        obj,
+        tipo,
+        fila.querySelector(".btn-eliminar")
+      );
     });
   };
 
@@ -355,7 +471,7 @@ function editarCursoCertificado(fila, item, tipo) {
       try {
         const actualizado = {
           id_prese_curs_certi: nuevoItem.id_prese_curs_certi,
-          id_preseleccionado: idCandidatoExiste,
+          id_preseleccionado: idPreseleccionado,
           id_curs_certi: fila.children[0].children[0].value,
           fecha_inicio: fila.children[1].children[0].value,
         };
@@ -411,11 +527,16 @@ async function llenarHistorialProyectos(documento) {
         tr.innerHTML = `
           <td class="">${proyecto.des_cc ?? "--"}</td>
           <td class="">${proyecto.cargo ?? "--"}</td>
-          <td class="">${proyecto.ingreso?.split(" ")[0] ?? "--"}</td>
-          <td class="">${proyecto.cese?.split(" ")[0] ?? "--"}</td>
+          <td class="">${
+            proyecto.ingreso?.split(" ")[0].split("-").reverse().join("-") ??
+            "--"
+          }</td>
+          <td class="">${
+            proyecto.cese?.split(" ")[0].split("-").reverse().join("-") ?? "--"
+          }</td>
           <td class="">${proyecto.obs ?? "--"}</td>
           `;
-        
+
         tblProyectosPreseleccionado.append(tr);
       });
     }
@@ -431,13 +552,13 @@ documentoModal.addEventListener("hidden.bs.modal", function (event) {
     "alertaBusquedaDocumento"
   );
   alertaBusquedaDocumento.innerHTML = "";
-  txtDocumentoCandidato.value = "";
+  txtDocumentoPreseleccionado.value = "";
 });
 
 const requerimientoModal = document.getElementById("requerimientoModal");
 
 requerimientoModal.addEventListener("hidden.bs.modal", function (event) {
-  idCandidatoExiste = "";
+  idPreseleccionado = "";
   const txtApellidosNombres = document.getElementById("txtApellidosNombres");
   const txtDocumento = document.getElementById("txtDocumento");
   const txtFechaDeNacimiento = document.getElementById("txtFechaDeNacimiento");
@@ -461,19 +582,19 @@ requerimientoModal.addEventListener("hidden.bs.modal", function (event) {
   txtDepartamentoResidencia.value = "";
 });
 
-function camposValidosBuscarCandidato() {
-  if (txtDocumentoCandidato.value.trim() === "") {
-    txtDocumentoCandidato.classList.add("is-invalid");
-    txtDocumentoCandidato.classList.remove("border-dark");
+function camposValidosBuscarPreseleccionado() {
+  if (txtDocumentoPreseleccionado.value.trim() === "") {
+    txtDocumentoPreseleccionado.classList.add("is-invalid");
+    txtDocumentoPreseleccionado.classList.remove("border-dark");
     return false;
   }
 
   return true;
 }
 
-txtDocumentoCandidato.addEventListener("input", () => {
-  txtDocumentoCandidato.classList.remove("is-invalid");
-  txtDocumentoCandidato.classList.add("border-dark");
+txtDocumentoPreseleccionado.addEventListener("input", () => {
+  txtDocumentoPreseleccionado.classList.remove("is-invalid");
+  txtDocumentoPreseleccionado.classList.add("border-dark");
 });
 
 function agregarNuevoCursoCertificado(tipo, listaItems) {
@@ -512,11 +633,30 @@ function agregarNuevoCursoCertificado(tipo, listaItems) {
   tr.querySelector(".btnNuevoGuardar").addEventListener(
     "click",
     async function () {
+      const btnNuevoGuardar = tr.querySelector(".btnNuevoGuardar");
+
+      const id_curs_certi = tr.children[0].children[0].value;
+      const fecha_inicio = tr.children[1].children[0].value;
+
+      if (id_curs_certi == "" || fecha_inicio == "") {
+        Swal.fire({
+          title: "Error",
+          text: `Debe seleccionar un ${
+            tipo === "curso" ? "curso" : "certificado"
+          } y poner su fecha de inicio`,
+          icon: "error",
+        });
+        return;
+      }
+
+      btnNuevoGuardar.disabled = true;
+      btnNuevoGuardar.textContent = "Guardando...";
+
       try {
         const pre_cur_cert = {
-          id_preseleccionado: idCandidatoExiste,
-          id_curs_certi: tr.children[0].children[0].value,
-          fecha_inicio: tr.children[1].children[0].value,
+          id_preseleccionado: idPreseleccionado,
+          id_curs_certi: id_curs_certi,
+          fecha_inicio: fecha_inicio,
         };
 
         const formData = new FormData();
@@ -571,6 +711,8 @@ function agregarNuevoCursoCertificado(tipo, listaItems) {
         }
       } catch (error) {
         console.error(error);
+        btnNuevoGuardar.disabled = false;
+        btnNuevoGuardar.textContent = "Guardar";
       }
     }
   );
@@ -589,6 +731,10 @@ document.getElementById("requerimientoModal").addEventListener("click", (e) => {
     agregarNuevoCursoCertificado("certificado", certificaciones);
   }
 
+  if (e.target.matches("#btnActualizarInforDatGenerales")) {
+    guardarInformacionPreseleRequerimiento();
+  }
+
   if (
     e.target.closest("#tblCursosPreseleccionado") &&
     e.target.classList.contains("btnEliminarCurso")
@@ -604,6 +750,167 @@ document.getElementById("requerimientoModal").addEventListener("click", (e) => {
   }
 });
 
+async function eliminarPreseDelReque(btn, idPreseleccionado, idRequerimiento) {
+  const btnEliminar = document.getElementById("eliminarPreReque");
+  const fila = btn.closest(".filaPreseleecionado");
+  try {
+    btnEliminar.disabled = true;
+    let formData = new FormData();
+    formData.append("id_preseleccionado", idPreseleccionado);
+    formData.append("id_requerimiento", idRequerimiento);
+    const resp = await fetch("api/eliminarPreseRequer", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await resp.json();
+
+    if (data.exitoso) {
+      Swal.fire({
+        icon: "success",
+        title: "Éxito",
+        text: data.mensaje,
+      });
+      fila.remove();
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error al realizar la acción",
+        text: data.mensaje,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    Swal.fire({
+      icon: "error",
+      title: "Error al realizar la acción",
+      text: data.mensaje,
+    });
+  } finally {
+    btnEliminar.disabled = false;
+  }
+}
+
+async function guardarInformacionPreseleRequerimiento() {
+  if (!camposValidosActualizarPreseleccionado()) return;
+
+  const btnActualizarInforDatGenerales = document.getElementById(
+    "btnActualizarInforDatGenerales"
+  );
+
+  btnActualizarInforDatGenerales.disabled = true;
+  btnActualizarInforDatGenerales.textContent = "Guardando...";
+
+  const txtApellidosNombres = document.getElementById(
+    "txtApellidosNombresActualizar"
+  );
+  const txtDocumento = document.getElementById("txtDocumentoActualizar");
+  const txtFechaDeNacimiento = document.getElementById(
+    "txtFechaDeNacimientoActualizar"
+  );
+  const txtEdad = document.getElementById("txtEdadActualizar");
+  const txtExactian = document.getElementById("txtExactianActualizar");
+  const txtTelefono1 = document.getElementById("txtTelefono1Actualizar");
+  const txtTelefono2 = document.getElementById("txtTelefono2Actualizar");
+  const txtEmail = document.getElementById("txtEmailActualizar");
+  const txtDepartamentoResidencia = document.getElementById(
+    "txtDepartamentoResidenciaActualizar"
+  );
+
+  let preseleccionado = {
+    id_preseleccionado: idPreseleccionado,
+    apellidos_nombres: txtApellidosNombres.value,
+    documento: txtDocumento.value,
+    fecha_nacimiento: txtFechaDeNacimiento.value,
+    edad: txtEdad.value,
+    exactian: txtExactian.value,
+    // fecha_ingreso_ultimo_proyecto: "",
+    // fecha_cese_ultimo_proyecto: "",
+    // nombre_ultimo_proyecto: "",
+    telefono_1: txtTelefono1.value,
+    telefono_2: txtTelefono2.value,
+    email: txtEmail.value,
+    departamento_residencia: txtDepartamentoResidencia.value,
+  };
+
+  let preseleccionado_requerimiento = {
+    id_reque_proy: idRequerimiento,
+    id_preseleccionado: idPreseleccionado,
+    poliza: txtPoliza.value,
+    viabilidad: txtViabilidad.value,
+    observacion: txtObservacion.value,
+    ingreso_obra: txtIngresoObra.value,
+    estado: txtEstado.value,
+    observacion2: txtObservacion2.value,
+    alfa: txtAlfa.value,
+    viabilidad2: txtViabilidad2.value,
+    rrhh: txtRRHH.value,
+  };
+
+  try {
+    let formData = new FormData();
+    formData.append("preseleccionado", JSON.stringify(preseleccionado));
+    formData.append(
+      "preseleccionado_requerimiento",
+      JSON.stringify(preseleccionado_requerimiento)
+    );
+    const resp = await fetch("api/actualizarInformacionPreReque", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await resp.json();
+    if (data.exitoso) {
+      Swal.fire({
+        icon: "success",
+        title: "Éxito",
+        text: data.mensaje,
+      });
+      // actualizarInformacionPreseleccionado(preseleecionado);
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error al realizar la acción",
+        text: data.mensaje,
+      });
+    }
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Error al realizar la acción",
+      text: data.mensaje,
+    });
+  } finally {
+    btnActualizarInforDatGenerales.disabled = false;
+    btnActualizarInforDatGenerales.innerHTML = `
+      <i class="bi bi-floppy-fill"></i> Guardar información`;
+  }
+}
+
+function camposValidosActualizarPreseleccionado() {
+  let campos = [
+    "txtApellidosNombresActualizar",
+    "txtDocumentoActualizar",
+    "txtFechaDeNacimientoActualizar",
+    "txtEdadActualizar",
+    // "txtExactianActualizar",
+    // "txtTelefono1Actualizar",
+    // "txtTelefono2Actualizar",
+    "txtEmailActualizar",
+    // "txtDepartamentoResidenciaActualizar",
+  ];
+  let validacion = true;
+
+  campos.forEach((campo) => {
+    const elemento = document.getElementById(campo);
+    if (elemento.value.trim() === "") {
+      elemento.classList.add("is-invalid");
+      elemento.classList.remove("border-dark");
+      validacion = false;
+    }
+  });
+
+  return validacion;
+}
+
 let estadoInicialModal;
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -617,8 +924,28 @@ modalElement.addEventListener("hidden.bs.modal", function () {
   modalElement.innerHTML = estadoInicialModal;
 });
 
-
 async function exportarStatusPorRequerimiento(idRequerimiento) {
   document.getElementById("inputRequerimientoExcel").value = idRequerimiento;
   document.getElementById("formExcel").submit();
+}
+
+
+new Sortable(document.getElementById("column1"), {
+  group: "shared",
+  animation: 150,
+});
+
+new Sortable(document.getElementById("column2"), {
+  group: "shared",
+  animation: 150,
+});
+
+function exportarSeleccion() {
+  const seleccionados = [];
+  document.querySelectorAll("#column2 .list-group-item").forEach((el) => {
+    seleccionados.push(el.textContent.trim());
+  });
+
+  // Aquí puedes hacer una petición AJAX o descargar Excel, etc.
+  alert("Campos seleccionados para exportar:\n" + seleccionados.join(", "));
 }

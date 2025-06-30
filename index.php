@@ -59,10 +59,16 @@ $router->map('POST', '/api/buscarDocumentoPreseleccionado', function() {
     $controller->apiBuscarDocumentoPreseleccionado();
 });
 
-$router->map('POST', '/api/guardarInformacionCandidato', function() {
+$router->map('POST', '/api/guardarInformacionPreseleccionado', function() {
     require_once CONTROLLERS_PATH.'/ProyectosController.php';
     $controller = new ProyectosController();
-    $controller->apiGuardarInformacionCandidato();
+    $controller->apiGuardarInformacionPrseleccionado();
+});
+
+$router->map('POST', '/api/actualizarInformacionPreReque', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiActualizarInformacionPreReque();
 });
 
 $router->map('GET', '/api/obtenerCursosCertificaciones', function() {
@@ -75,6 +81,18 @@ $router->map('POST', '/api/buscarDetallePreseleccionado', function() {
     require_once CONTROLLERS_PATH.'/ProyectosController.php';
     $controller = new ProyectosController();
     $controller->apiBuscarDetallePreseleccionado();
+});
+
+$router->map('POST', '/api/eliminarPreseRequer', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiEliminarPreseleccionadoRequerimiento();
+});
+
+$router->map('POST', '/api/eliminarCursCertPreseleccionado', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiEliminarCursCertPreseleccionado();
 });
 
 $router->map('POST', '/api/guardarCurCertPreseleccionado', function() {

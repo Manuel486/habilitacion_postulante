@@ -53,4 +53,5 @@ class CursoCertificacionController
             echo ApiRespuesta::error("No se pudo obtener los cursos y certificaciones");
         }
     }
+    
 }

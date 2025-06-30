@@ -45,10 +45,10 @@ class ProyectosController
             $certificaciones = $this->curso_certificacionModel->obtenerCursosCertificaciones();
 
             $requerimientos = array_map(function ($requerimiento) {
-                $requerimiento["candidatos"] = $this->preseleccionadoModel
-                    ->obtenerCandidatosPorRequerimiento($requerimiento["id_requerimiento"]);
+                $requerimiento["preseleccionados"] = $this->preseleccionadoModel
+                    ->obtenerPreseleccionadosPorRequerimiento($requerimiento["id_requerimiento"]);
                 $requerimiento["cubiertos"] = $this->preseleccionadoModel
-                    ->contarCandidatosCubiertosPorRequerimiento($requerimiento["id_requerimiento"]);
+                    ->contarPreseleccionadosCubiertosPorRequerimiento($requerimiento["id_requerimiento"]);
                 return $requerimiento;
             }, $requerimientos);
 
@@ -106,8 +106,8 @@ class ProyectosController
     public function apiBuscarDocumentoPreseleccionado()
     {
         try {
-            if (!isset($_POST["documento"])) {
-                echo ApiRespuesta::error("Debe enviar el documento");
+            if (!isset($_POST["documento"]) || !isset($_POST["id_requerimiento"])) {
+                echo ApiRespuesta::error("Debe enviar el documento y el id del requerimiento");
                 exit;
             }
 
@@ -116,18 +116,53 @@ class ProyectosController
 
             $preseleccionado = $this->preseleccionadoModel->obtenerPorDocumento($documento);
 
-            if ($preseleccionado) {
-                $this->preseleccionadoModel->insertarCandidatoProyecto($idRequerimiento, $preseleccionado["id_preseleccionado"]);
+            if (!$preseleccionado) {
+                $url = "http://sicalsepcon.net/api/matrizworkerdataapi.php?documento=" . $documento;
+                $api = file_get_contents($url);
+                $datos = json_decode($api, true);
+
+                if (empty($datos)) {
+                    echo ApiRespuesta::error("Persona no encontrada");
+                    return;
+                } else {
+                    $id_preseleccionado = uniqid("PRE");
+                    $preseleccionado["id_preseleccionado"] = $id_preseleccionado;
+                    $preseleccionado["apellidos_nombres"] = $datos[0]["paterno"] . " " . $datos[0]["materno"] . " " . $datos[0]["nombres"];
+                    $preseleccionado["documento"] = $datos[0]["dni"];
+                    $preseleccionado["fecha_nacimiento"] = $datos[0]["nacimiento"];
+                    $preseleccionado["email"] = $datos[0]["correo"];
+                    $preseleccionado["edad"] = $this->calcularEdad($datos[0]["nacimiento"]);
+                    $preseleccionado["fecha_ingreso_ultimo_proyecto"] = $datos[0]["ingreso"];
+                    $preseleccionado["fecha_cese_ultimo_proyecto"] = $datos[0]["cesado"];
+                    $preseleccionado["nombre_ultimo_proyecto"] = $datos[0]["proyecto"];
+
+                    $insertado = $this->preseleccionadoModel->insertarPreseleccionado($preseleccionado);
+                    if (!$insertado) {
+                        echo ApiRespuesta::error("No se pudo insertar el candidato (ya existe o hubo un error).");
+                        return;
+                    }
+                }
             }
 
-            if ($preseleccionado) {
-                echo ApiRespuesta::exitoso($preseleccionado, "Persona encontrada");
+            $yaAsociado = $this->preseleccionadoModel->yaEstaAsociadoAlRequerimiento($preseleccionado["id_preseleccionado"], $idRequerimiento);
+
+            if ($yaAsociado) {
+                echo ApiRespuesta::error("La persona ya está asociada al requerimiento.");
             } else {
-                echo ApiRespuesta::error("Persona no encontrada");
+                $this->preseleccionadoModel->insertarPreseleccionadoRequerimiento($idRequerimiento, $preseleccionado["id_preseleccionado"]);
+                echo ApiRespuesta::exitoso($preseleccionado, "Persona encontrada y asociada correctamente.");
             }
         } catch (Exception $e) {
             echo ApiRespuesta::error("No se pudo realizar la búsqueda del documento por una falla en el servidor.");
         }
+    }
+
+    public function calcularEdad($fechaNacimiento)
+    {
+        $fechaNacimiento = new DateTime($fechaNacimiento);
+        $hoy = new DateTime();
+        $edad = $fechaNacimiento->diff($hoy);
+        return $edad->y;
     }
 
     public function apiBuscarDetallePreseleccionado()
@@ -138,14 +173,25 @@ class ProyectosController
                 exit;
             }
 
+            if (!isset($_POST["id_requerimiento"])) {
+                echo ApiRespuesta::error("Debe enviar el id del requerimiento");
+                exit;
+            }
+
+
             $idPreseleccionado = $_POST["id_preseleccionado"];
+            $idRequerimiento = $_POST["id_requerimiento"];
 
             $preseleccionado = $this->preseleccionadoModel->obtenerPorIdPreseleccionado($idPreseleccionado);
             $cursos = $this->preseleccionadoModel->obtenerCurCertPreseleccionado($idPreseleccionado, "curso");
             $certificados = $this->preseleccionadoModel->obtenerCurCertPreseleccionado($idPreseleccionado, "certificado");
+            $preseleccionado_requerimiento = $this->preseleccionadoModel->obtenerInformacionPreselecRequerimiento($idPreseleccionado,$idRequerimiento);
+            $alertas_cur_cert = $this->preseleccionadoModel->obtenerAlertasCertiCurso($idPreseleccionado);
 
             $preseleccionado["cursos"] = $cursos;
             $preseleccionado["certificados"] = $certificados;
+            $preseleccionado["preseleccionado_requerimiento"] = $preseleccionado_requerimiento;
+            $preseleccionado["alertas_cur_cert"] = $alertas_cur_cert;
             if ($preseleccionado) {
                 echo ApiRespuesta::exitoso($preseleccionado, "Persona encontrada");
             } else {
@@ -157,11 +203,11 @@ class ProyectosController
         }
     }
 
-    public function apiGuardarInformacionCandidato()
+    public function apiGuardarInformacionPrseleccionado()
     {
         try {
             if (!isset($_POST["preseleccionado"])) {
-                echo ApiRespuesta::error("Debe enviar información del candidato");
+                echo ApiRespuesta::error("Debe enviar información del preseleccionado");
                 exit;
             }
 
@@ -183,7 +229,7 @@ class ProyectosController
             if ($idPreseleccionado == "") {
                 $id_preseleccionado = uniqid("PRE");
                 $preseleccionado["id_preseleccionado"] = $id_preseleccionado;
-                $insertado = $this->preseleccionadoModel->insertarCandidato($preseleccionado);
+                $insertado = $this->preseleccionadoModel->insertarPreseleccionado($preseleccionado);
                 if (!$insertado) {
                     echo ApiRespuesta::error("No se pudo insertar el candidato (ya existe o hubo un error).");
                     return;
@@ -192,7 +238,7 @@ class ProyectosController
                 $id_preseleccionado = $idPreseleccionado;
             }
 
-            $respuesta = $this->preseleccionadoModel->insertarCandidatoProyecto($idRequerimiento, $id_preseleccionado);
+            $respuesta = $this->preseleccionadoModel->insertarPreseleccionadoRequerimiento($idRequerimiento, $id_preseleccionado);
 
             if ($respuesta) {
                 echo ApiRespuesta::exitoso("", "Candidato guardado con éxito.");
@@ -202,6 +248,32 @@ class ProyectosController
         } catch (Exception $e) {
             echo ApiRespuesta::error("Error inesperado al guardar candidato.");
         }
+    }
+
+    public function apiActualizarInformacionPreReque()
+    {
+        if (!isset($_POST["preseleccionado"])) {
+            echo ApiRespuesta::error("Debe enviar información del preseleccionado");
+            exit;
+        }
+
+        if (!isset($_POST["preseleccionado_requerimiento"])) {
+            echo ApiRespuesta::error("Debe enviar información del preseleccionado relacionado a su requerimiento");
+            exit;
+        }
+
+        $preseleccionado = json_decode($_POST["preseleccionado"], true);
+        $preseleccionado_requerimiento = json_decode($_POST["preseleccionado_requerimiento"], true);
+
+        // $respuesta = $this->preseleccionadoModel->actualizarPreseleccionado($preseleccionado);
+        $respuesta = $this->preseleccionadoModel->actualizarPreseleccionadoRequerimiento($preseleccionado_requerimiento);
+
+        if ($respuesta) {
+            echo ApiRespuesta::exitoso("", "Actualizado con éxito.");
+        } else {
+            echo ApiRespuesta::error("No se pudo actualizar.");
+        }
+
     }
 
     public function apiGuardarCurCertPreseleccionado()
@@ -279,6 +351,56 @@ class ProyectosController
             }
         } catch (Exception $e) {
             echo ApiRespuesta::error("Error inesperado al guardar preseleccionado con el curso/certificado.");
+        }
+    }
+
+    public function apiEliminarPreseleccionadoRequerimiento()
+    {
+        if (!isset($_POST["id_preseleccionado"])) {
+            echo ApiRespuesta::error("Debe enviar el id del preseleccionado");
+            exit;
+        }
+
+        if (!isset($_POST["id_requerimiento"])) {
+            echo ApiRespuesta::error("Debe enviar el id del requerimiento");
+            exit;
+        }
+
+        $idPreseleccionado = $_POST["id_preseleccionado"];
+        $idRequerimiento = $_POST["id_requerimiento"];
+
+        try {
+            $respuesta = $this->preseleccionadoModel->eliminarPreseleccionadoRequerimiento($idRequerimiento, $idPreseleccionado);
+
+            if ($respuesta) {
+                echo ApiRespuesta::exitoso("", "Preseleccionado eliminado con éxito del requerimiento.");
+            } else {
+                echo ApiRespuesta::error("No se pudo eliminar el preseleccionado del requerimiento.");
+            }
+        } catch (Exception $e) {
+            echo ApiRespuesta::error("Error inesperado al eliminar el preseleccionado del requerimiento.");
+        }
+    }
+
+    public function apiEliminarCursCertPreseleccionado()
+    {
+        if (!isset($_POST["id_prese_curs_certi"])) {
+            echo ApiRespuesta::error("Debe enviar el id del preseleccionado-curso-certi");
+            exit;
+        }
+
+        $idPreCursCerti = $_POST["id_prese_curs_certi"];
+
+        try {
+            $respuesta = $this->preseleccionadoModel->eliminarCursCertPreseleccionado($idPreCursCerti);
+
+            if ($respuesta) {
+                echo ApiRespuesta::exitoso("", "Eliminado con éxito");
+            } else {
+                echo ApiRespuesta::error("No se pudo eliminar.");
+            }
+        } catch (Exception $e) {
+            echo ApiRespuesta::error("Error inesperado al eliminar.");
         }
     }
 

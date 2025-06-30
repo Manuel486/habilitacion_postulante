@@ -1,11 +1,11 @@
 <div class="modal" id="documentoModal" tabindex="-1" aria-labelledby="documentoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header encabezado text-white">
                 <h5 class="modal-title" id="documentoModalLabel">
                     Buscar candidato
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row row-gap-3">
@@ -16,9 +16,9 @@
                     <div class="col-12">
                         <div class="d-flex gap-2">
                             <input type="text" class="form-control  border-dark"
-                                placeholder="Ingresar documento de la persona" id="txtDocumentoCandidato" />
-                            <button class="btn btn-outline-dark d-flex gap-2" id="btnBuscarCandidato">
-                                <i class="bi bi-search"></i>Buscar
+                                placeholder="Ingresar documento de la persona" id="txtDocumentoPreseleccionado" />
+                            <button class="btn btn-outline-dark d-flex gap-2" id="btnBuscarPreseleccionado">
+                                <i class="bi bi-plus-circle-fill"></i> Agregar
                             </button>
                         </div>
                     </div>
@@ -29,7 +29,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" data-bs-target="#formularioCandidatoModal" data-bs-toggle="modal">
+                <button class="btn btn-outline-primary" data-bs-target="#formularioPreseleccionadoModal"
+                    data-bs-toggle="modal">
                     Registrar nuevo candidato
                 </button>
             </div>
@@ -38,35 +39,39 @@
 </div>
 
 
-<div class="modal fade" id="formularioCandidatoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="formularioCandidatoModalLabel" aria-hidden="true">
+<div class="modal fade" id="formularioPreseleccionadoModal" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="formularioPreseleccionadoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="formularioCandidatoModalLabel">
+            <div class="modal-header encabezado text-white">
+                <h5 class="modal-title" id="formularioPreseleccionadoModalLabel">
                     Nuevo candidato
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="" id="formularioNuevoCandidato">
+                <form action="" id="formularioNuevoPreseleccionado">
                     <div class="row row-gap-3">
                         <div class="col-lg-4">
-                            <label class="form-label" for="txtApellidosNombres">Apellidos y nombres</label>
+                            <label class="form-label" for="txtApellidosNombres">Apellidos y nombres <span
+                                    class="text-danger fw-bold">*</span></label>
                             <input class="form-control border-dark" placeholder="Apellidos y nombres" type="text"
                                 id="txtApellidosNombres" />
                         </div>
                         <div class="col-lg-2">
-                            <label class="form-label" for="txtDocumento">Documento</label>
+                            <label class="form-label" for="txtDocumento">Documento <span
+                                    class="text-danger fw-bold">*</span></label>
                             <input class="form-control  border-dark" placeholder="DNI" type="text" id="txtDocumento" />
                         </div>
                         <div class="col-lg-3">
-                            <label class="form-label" for="txtFechaDeNacimiento">Fecha de nacimiento</label>
+                            <label class="form-label" for="txtFechaDeNacimiento">Fecha de nacimiento <span
+                                    class="text-danger fw-bold">*</span></label>
                             <input class="form-control  border-dark" placeholder="" type="date"
                                 id="txtFechaDeNacimiento" />
                         </div>
                         <div class="col-lg-3">
-                            <label class="form-label" for="txtEdad">Edad</label>
+                            <label class="form-label" for="txtEdad">Edad <span
+                                    class="text-danger fw-bold">*</span></label>
                             <input class="form-control  border-dark" placeholder="Edad" type="number" id="txtEdad" />
                         </div>
                         <div class="col-lg-2">
@@ -85,7 +90,8 @@
                                 id="txtTelefono2" />
                         </div>
                         <div class="col-lg-3">
-                            <label class="form-label" for="txtEmail">Email</label>
+                            <label class="form-label" for="txtEmail">Email <span
+                                    class="text-danger fw-bold">*</span></label>
                             <input class="form-control  border-dark" placeholder="Ingresar email" type="email"
                                 id="txtEmail" />
                         </div>
@@ -98,9 +104,9 @@
                     </div>
 
                     <div class="my-4 d-flex justify-content-end w-100">
-                        <button type="submit" class="btn btn-success" id="btnGuardarInformacionCandidato">
+                        <button type="submit" class="btn btn-success" id="btnGuardarInformacionPreseleccionado">
                             <i class="bi bi-floppy"></i>
-                            Guardar todos los cambios
+                            Guardar
                         </button>
                     </div>
                 </form>
@@ -115,23 +121,17 @@
     aria-labelledby="requerimientoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header encabezado text-white">
                 <h5 class="modal-title" id="requerimientoModalLabel">
                     Actualizar datos
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="row row-cols-3 p-3 gap-1">
-                    <div class="alert alert-danger" role="alert">
-                        Tiene una observación en su último proyecto
-                    </div>
-                    <div class="alert alert-warning" role="alert">
-                        Certificado COT cerca a caducar
-                    </div>
+                <div class="row row-cols-4 row-gap-1" id="alertasPreseleccionado">
                 </div>
 
-                <div class="encabezado rounded"></div>
+                <!-- <div class="encabezado rounded"></div> -->
 
                 <!-- NAV DE PESTAÑAS -->
                 <ul class="nav nav-tabs my-3" id="myTab" role="tablist">
@@ -173,48 +173,51 @@
                 <div class="tab-content mt-3" id="">
                     <div class="tab-pane fade show active" id="datos" role="tabpanel">
                         <div class="row row-gap-3">
+
                             <div class="col-lg-4">
-                                <label class="form-label" for="txtApellidosNombres">Apellidos y nombres</label>
+                                <label class="form-label" for="txtApellidosNombresActualizar">Apellidos y
+                                    nombres</label>
                                 <input class="form-control border-dark" placeholder="Apellidos y nombres" type="text"
                                     id="txtApellidosNombresActualizar" />
                             </div>
                             <div class="col-lg-2">
-                                <label class="form-label" for="txtDocumento">Documento</label>
+                                <label class="form-label" for="txtDocumentoActualizar">Documento</label>
                                 <input class="form-control  border-dark" placeholder="DNI" type="text"
                                     id="txtDocumentoActualizar" />
                             </div>
                             <div class="col-lg-3">
-                                <label class="form-label" for="txtFechaDeNacimiento">Fecha de nacimiento</label>
+                                <label class="form-label" for="txtFechaDeNacimientoActualizar">Fecha de
+                                    nacimiento</label>
                                 <input class="form-control  border-dark" placeholder="" type="date"
                                     id="txtFechaDeNacimientoActualizar" />
                             </div>
                             <div class="col-lg-3">
-                                <label class="form-label" for="txtEdad">Edad</label>
+                                <label class="form-label" for="txtEdadActualizar">Edad</label>
                                 <input class="form-control  border-dark" placeholder="Edad" type="number"
                                     id="txtEdadActualizar" />
                             </div>
                             <div class="col-lg-2">
-                                <label class="form-label" for="txtExactian">Exactian</label>
+                                <label class="form-label" for="txtExactianActualizar">Exactian</label>
                                 <input class="form-control  border-dark" placeholder="Exactian" type="text"
                                     id="txtExactianActualizar" />
                             </div>
                             <div class="col-lg-2">
-                                <label class="form-label" for="txtTelefono1">Teléfono 1</label>
+                                <label class="form-label" for="txtTelefono1Actualizar">Teléfono 1</label>
                                 <input class="form-control  border-dark" placeholder="Teléfono 1" type="text"
                                     id="txtTelefono1Actualizar" />
                             </div>
                             <div class="col-lg-2">
-                                <label class="form-label" for="txtTelefono2">Teléfono 2</label>
+                                <label class="form-label" for="txtTelefono2Actualizar">Teléfono 2</label>
                                 <input class="form-control  border-dark" placeholder="Teléfono 2" type="text"
                                     id="txtTelefono2Actualizar" />
                             </div>
                             <div class="col-lg-3">
-                                <label class="form-label" for="txtEmail">Email</label>
+                                <label class="form-label" for="txtEmailActualizar">Email</label>
                                 <input class="form-control  border-dark" placeholder="Ingresar email" type="email"
                                     id="txtEmailActualizar" />
                             </div>
                             <div class="col-lg-3">
-                                <label class="form-label" for="txtDepartamentoResidencia">Departamento de
+                                <label class="form-label" for="txtDepartamentoResidenciaActualizar">Departamento de
                                     residencia</label>
                                 <input class="form-control  border-dark" placeholder="Ingresar departamento" type="text"
                                     id="txtDepartamentoResidenciaActualizar" />
@@ -226,43 +229,52 @@
 
                             <div class="col-lg-3">
                                 <label for="">POLIZA</label>
-                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" />
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado"
+                                    id="txtPoliza" />
                             </div>
                             <div class="col-lg-3">
                                 <label for="">VIABILIDAD</label>
-                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" />
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado"
+                                    id="txtViabilidad" />
                             </div>
                             <div class="col-lg-6">
                                 <label for="">Observación</label>
-                                <input class="form-control  border-dark" type="text"
-                                    placeholder="Ingresar observación" />
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar observación"
+                                    id="txtObservacion" />
                             </div>
                             <div class="col-lg-3">
                                 <label for="">Ingreso a obra</label>
-                                <input class="form-control  border-dark" type="date" />
+                                <input class="form-control  border-dark" type="date" id="txtIngresoObra" />
                             </div>
                             <div class="col-lg-3">
                                 <label for="">Estado</label>
-                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" />
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado"
+                                    id="txtEstado" />
                             </div>
                             <div class="col-lg-6">
                                 <label for="">Observación 2</label>
                                 <input class="form-control  border-dark" type="text"
-                                    placeholder="Ingresar observación 2" />
+                                    placeholder="Ingresar observación 2" id="txtObservacion2" />
                             </div>
                             <div class="col-lg-3">
                                 <label for="">ALFA</label>
-                                <input class="form-control  border-dark" type="text" placeholder="Ingresar Alfa" />
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar Alfa"
+                                    id="txtAlfa" />
                             </div>
                             <div class="col-lg-3">
                                 <label for="">VIABILIDAD2</label>
-                                <input class="form-control  border-dark" type="text"
-                                    placeholder="Ingresar viabilidad" />
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar viabilidad"
+                                    id="txtViabilidad2" />
                             </div>
                             <div class="col-lg-3">
                                 <label for="">RR.HH</label>
                                 <input class="form-control  border-dark bg-light" type="text"
-                                    placeholder="Ingresar RR.HH" readonly />
+                                    placeholder="Ingresar RR.HH" readonly id="txtRRHH" />
+                            </div>
+                            <div class="col-lg-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-success" id="btnActualizarInforDatGenerales"><i
+                                        class="bi bi-floppy-fill"></i>
+                                    Guardar información</button>
                             </div>
                         </div>
                     </div>
@@ -292,7 +304,7 @@
                                             <th>Observación</th>
                                         </thead>
                                         <tbody>
-                                            
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -311,7 +323,7 @@
                                             <i class="bi bi-search"></i>Buscar
                                         </button>
                                         <button class="btn btn-outline-dark d-flex gap-2" id="btnAgregarCertificacion">
-                                            <i class="bi bi-plus-circle"></i>Agregar
+                                            Agregar
                                         </button>
                                     </div>
                                 </div>
@@ -361,7 +373,7 @@
                                                 <th></th>
                                             </thead>
                                             <tbody>
-                                                
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -411,6 +423,62 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="exportExcelPreseRequeModal" tabindex="-1" aria-labelledby="exportExcelPreseRequeModalLabel"
+    data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header encabezado text-white">
+                <h5 class="modal-title" id="exportExcelPreseRequeModalLabel">
+                    Exportar Excel de Status
+                </h5>
+                <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body ">
+                <div class="d-flex gap-2 my-2">
+                    <button class="btn btn-outline-dark border-dark">Plantilla 1</button>
+                </div>
+                <div class="d-flex gap-3">
+                    <div class="column border rounded p-2 flex-fill" id="allFields">
+                        <h6>Todos los Campos</h6>
+                        <div class="item list-group" id="column1">
+                            <div class="list-group-item" data-id="1">ID</div>
+                            <div class="list-group-item" data-id="2">Nombre</div>
+                            <div class="list-group-item" data-id="3">Email</div>
+                            <div class="list-group-item" data-id="4">Teléfono</div>
+                            <div class="list-group-item" data-id="5">Fecha Registro</div>
+                            <div class="list-group-item" data-id="1">ID</div>
+                            <div class="list-group-item" data-id="2">Nombre</div>
+                            <div class="list-group-item" data-id="3">Email</div>
+                            <div class="list-group-item" data-id="4">Teléfono</div>
+                            <div class="list-group-item" data-id="5">Fecha Registro</div>
+                            <div class="list-group-item" data-id="1">ID</div>
+                            <div class="list-group-item" data-id="2">Nombre</div>
+                            <div class="list-group-item" data-id="3">Email</div>
+                            <div class="list-group-item" data-id="4">Teléfono</div>
+                            <div class="list-group-item" data-id="5">Fecha Registro</div>
+                        </div>
+                    </div>
+                    <div class="column border rounded p-2 flex-fill" id="selectedFields">
+                        <h6>Campos a Exportar</h6>
+                        <div class="item list-group" id="column2">
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" onclick="exportarSeleccion()">Exportar</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     Cerrar
                 </button>

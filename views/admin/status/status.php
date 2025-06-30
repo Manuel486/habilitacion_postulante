@@ -61,7 +61,7 @@
                   </td> -->
                   <td><?= $requerimiento["fecha_registro"] ?></td>
                   <td><?= $requerimiento["numero_requerimiento"] ?></td>
-                  <td><?= $requerimiento["fecha_requerimiento"] ?></td>
+                  <td><?= implode("-", array_reverse(explode("-", $requerimiento["fecha_requerimiento"]))) ?></td>
                   <td><?= $requerimiento["tipo_requerimiento"] ?></td>
                   <td><?= $requerimiento["nombreFase"] ?></td>
                   <td><?= $requerimiento["nombreCargo"] ?></td>
@@ -88,9 +88,13 @@
                     <div class="p-3 border rounded shadow-sm bg-body">
                       <div class="d-flex justify-content-between align-items-center my-2">
                         <h6 class="text-primary fw-bold mb-3">👥 Personas asignadas:</h6>
-                        <button class="btn btn-outline-success" onClick="exportarStatusPorRequerimiento('<?= $requerimiento["id_requerimiento"] ?>')">
+                        <button type="button" class="btn btn-outline-dark border-dark" data-bs-toggle="modal"
+                          data-bs-target="#exportExcelPreseRequeModal">
                           <i class="bi bi-file-earmark-excel-fill"></i> Exportar
                         </button>
+                        <!-- <button class="btn btn-outline-success" onClick="exportarStatusPorRequerimiento('<?= $requerimiento["id_requerimiento"] ?>')">
+                          <i class="bi bi-file-earmark-excel-fill"></i> Exportar
+                        </button> -->
                       </div>
                       <div class="table-responsive">
                         <div class="table table-bordered">
@@ -98,31 +102,44 @@
                             <div class="col p-2">Fecha de registro</div>
                             <div class="col p-2">Nombre completo</div>
                             <div class="col p-2">Documento</div>
-                            <div class="col p-2">Fecha nacimiento</div>
                             <div class="col p-2">Exactian</div>
                             <div class="col p-2">Ingreso último proyecto</div>
                             <div class="col p-2">Cese último proyecto</div>
-                            <div class="col p-2">Departamento</div>
+                            <div class="col p-2">Certificado-Cursos</div>
                             <div class="col p-2">Opciones</div>
                           </div>
 
-                          <?php foreach ($requerimiento["candidatos"] as $candidato): ?>
-                            <div class="row g-0 text-center text-uppercase">
-                              <div class="col p-2"><?= $candidato["fecha_registro"] ?></div>
-                              <div class="col p-2"><?= $candidato["apellidos_nombres"] ?></div>
-                              <div class="col p-2"><?= $candidato["documento"] ?></div>
-                              <div class="col p-2"><?= $candidato["edad"] ?></div>
-                              <div class="col p-2"><?= $candidato["exactian"] ?></div>
-                              <div class="col p-2"><?= $candidato["fecha_ingreso_ultimo_proyecto"] ?></div>
-                              <div class="col p-2"><?= $candidato["fecha_cese_ultimo_proyecto"] ?></div>
-                              <div class="col p-2"><?= $candidato["departamento_residencia"] ?></div>
+                          <?php foreach ($requerimiento["preseleccionados"] as $preseleccionado): ?>
+                            <div class="row g-0 text-center text-uppercase filaPreseleecionado">
+                              <div class="col p-2"><?= $preseleccionado["fecha_registro"] ?></div>
+                              <div class="col p-2"><?= $preseleccionado["apellidos_nombres"] ?></div>
+                              <div class="col p-2"><?= $preseleccionado["documento"] ?></div>
+                              <div class="col p-2"><?= $preseleccionado["exactian"] ?></div>
+                              <div class="col p-2">
+                                <?= implode("-", array_reverse(explode("-", $preseleccionado["fecha_ingreso_ultimo_proyecto"]))) ?>
+                              </div>
+                              <div class="col p-2">
+                                <?= implode("-", array_reverse(explode("-", $preseleccionado["fecha_cese_ultimo_proyecto"]))) ?>
+                              </div>
+                              <div class="col p-2 d-flex align-items-center justify-content-center gap-1">
+                                <?php if ($preseleccionado["tiene_cerca"] > 0): ?>
+                                  <span class="badge text-bg-warning">Cerca</span>
+                                <?php endif; ?>
+                                <?php if ($preseleccionado["tiene_caduco"] > 0): ?>
+                                  <span class="badge text-bg-danger">Caducó</span>
+                                <?php endif; ?>
+                                <?php if ($preseleccionado["tiene_vigente"] > 0 and $preseleccionado["tiene_cerca"] == 0 and $preseleccionado["tiene_caduco"] == 0): ?>
+                                  <span class="badge text-bg-success">Vigente</span>
+                                <?php endif; ?>
+                              </div>
                               <div class="col p-2">
                                 <button class="btn btn-outline-info" data-bs-target="#requerimientoModal"
-                                  data-bs-toggle="modal"
-                                  onClick="cargarDatosPreseleccionado('<?= $candidato["id_preseleccionado"] ?>','<?= $requerimiento["id_requerimiento"] ?>')">
+                                  data-bs-toggle="modal" id="visualizarPreReque"
+                                  onClick="cargarDatosPreseleccionado('<?= $preseleccionado["id_preseleccionado"] ?>','<?= $requerimiento["id_requerimiento"] ?>')">
                                   <i class="bi bi-eye"></i>
                                 </button>
-                                <button class="btn btn-outline-danger">
+                                <button class="btn btn-outline-danger" id="eliminarPreReque"
+                                  onClick="eliminarPreseDelReque(this,'<?= $preseleccionado["id_preseleccionado"] ?>','<?= $requerimiento["id_requerimiento"] ?>')">
                                   <i class="bi bi-trash3"></i>
                                 </button>
                               </div>
@@ -152,6 +169,9 @@
   <?php include_once "agregarPreseleccionado.php"; ?>
   <?php include_once "formularioRequerimiento.php"; ?>
 
+  <script src="
+  https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js
+  "></script>
   <script src="<?= BASE_URL ?>views/js/bootstrap.bundle.min.js"></script>
   <script src="<?= BASE_URL ?>views/js/status/status.js"></script>
   <script src="<?= BASE_URL ?>views/js/status/agregarPreseleccionado.js"></script>

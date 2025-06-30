@@ -35,7 +35,7 @@ class PreseleCursCertModel{
 
             return $statement->rowCount() > 0;
         }catch(Exception $e){
-            error_log("Error al insertar la relacion de candidato y curso-certificacion: " . $e->getMessage());
+            error_log("Error al insertar la relacion de preseleccionado y curso-certificacion: " . $e->getMessage());
             return false;
         }
     }
