@@ -131,8 +131,6 @@
                 <div class="row row-cols-4 row-gap-1" id="alertasPreseleccionado">
                 </div>
 
-                <!-- <div class="encabezado rounded"></div> -->
-
                 <!-- NAV DE PESTAÑAS -->
                 <ul class="nav nav-tabs my-3" id="myTab" role="tablist">
 
@@ -295,7 +293,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-hover" id="tblProyectosPreseleccionado">
+                                    <table class="table table-hover my-3" id="tblProyectosPreseleccionado">
                                         <thead class="">
                                             <th>Proyecto</th>
                                             <th>Cargo</th>
@@ -329,7 +327,7 @@
                                 </div>
                                 <div class="my-1 p-1">
                                     <div class="table-responsive">
-                                        <table class="table table-hover" id="tblCertificacionesPreseleccionados">
+                                        <table class="table table-hover my-3" id="tblCertificacionesPreseleccionados">
                                             <thead class="">
                                                 <th>Nombre</th>
                                                 <th>Inicio</th>
@@ -364,7 +362,7 @@
                                 </div>
                                 <div class="my-1 p-1">
                                     <div class="table-responsive">
-                                        <table class="table" id="tblCursosPreseleccionado">
+                                        <table class="table table-hover my-3" id="tblCursosPreseleccionado">
                                             <thead class="">
                                                 <th>Nombre</th>
                                                 <th>Inicio</th>
@@ -384,39 +382,48 @@
                     <div class="tab-pane fade" id="informacion_medica" role="tabpanel">
                         <div class="row row-gap-3">
                             <div class="col-lg-3">
-                                <label class="form-label" for="">4ta vacuna</label>
+                                <label class="form-label" for="txt4taVacuna">4ta vacuna</label>
                                 <input class="form-control  border-dark" type="text"
-                                    placeholder="Ingresar 4ta vacuna" />
+                                    placeholder="Ingresar 4ta vacuna" id="txt4taVacuna" />
                             </div>
                             <div class="col-lg-3">
-                                <label class="form-label" for="">Fecha de examen médico</label>
-                                <input class="form-control  border-dark" type="date" />
+                                <label class="form-label" for="txtFechaExamenMedico">Fecha de examen médico</label>
+                                <input class="form-control  border-dark" type="date" id="txtFechaExamenMedico" />
                             </div>
                             <div class="col-lg-3">
-                                <label class="form-label" for="">Clinica</label>
-                                <select class="form-select  border-dark" name="" id="">
-                                    <option value="" disabled selected>
+                                <label class="form-label" for="sltClinica">Clinica</label>
+                                <select class="form-select  border-dark" id="sltClinica">
+                                    <option disabled selected>
                                         Seleccionar opción
                                     </option>
-                                    <option value="">Medex</option>
-                                    <option value="">CC.MALVINAS</option>
+                                    <option value="ANA STAHL">ANA STAHL</option>
+                                    <option value="BOLIVIA">BOLIVIA</option>
+                                    <option value="CC.MALVINAS">CC.MALVINAS</option>
+                                    <option value="LAS AMERICAS">LAS AMERICAS</option>
+                                    <option value="MEDEX">MEDEX</option>
+                                    <option value="SERFARMED">SERFARMED</option>
                                 </select>
                             </div>
                             <div class="col-lg-3">
-                                <label class="form-label" for="">Resultado</label>
-                                <input class="form-control  border-dark" type="date" />
+                                <label class="form-label" for="txtResultado">Resultado</label>
+                                <input class="form-control  border-dark" type="date" id="txtResultado" />
                             </div>
                             <div class="col-lg-3">
-                                <label class="form-label" for="">Pase medico</label>
-                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" />
+                                <label class="form-label" for="txtPaseMedico">Pase medico</label>
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" id="txtPaseMedico" />
                             </div>
                             <div class="col-lg-3">
-                                <label class="form-label" for="">PM</label>
-                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" />
+                                <label class="form-label" for="txtPM">PM</label>
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" id="txtPM" />
                             </div>
                             <div class="col-lg-3">
-                                <label class="form-label" for="">Informe médico</label>
-                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" />
+                                <label class="form-label" for="txtInformeMedico">Informe médico</label>
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" id="txtInformeMedico" />
+                            </div>
+                            <div class="col-lg-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-success" id="btnActualizarInforMedica"><i
+                                        class="bi bi-floppy-fill"></i>
+                                    Guardar información</button>
                             </div>
                         </div>
                     </div>
@@ -433,7 +440,7 @@
 
 <div class="modal" id="exportExcelPreseRequeModal" tabindex="-1" aria-labelledby="exportExcelPreseRequeModalLabel"
     data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header encabezado text-white">
                 <h5 class="modal-title" id="exportExcelPreseRequeModalLabel">
@@ -442,43 +449,38 @@
                 <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body ">
-                <div class="d-flex gap-2 my-2">
-                    <button class="btn btn-outline-dark border-dark">Plantilla 1</button>
-                </div>
-                <div class="d-flex gap-3">
-                    <div class="column border rounded p-2 flex-fill" id="allFields">
-                        <h6>Todos los Campos</h6>
-                        <div class="item list-group" id="column1">
-                            <div class="list-group-item" data-id="1">ID</div>
-                            <div class="list-group-item" data-id="2">Nombre</div>
-                            <div class="list-group-item" data-id="3">Email</div>
-                            <div class="list-group-item" data-id="4">Teléfono</div>
-                            <div class="list-group-item" data-id="5">Fecha Registro</div>
-                            <div class="list-group-item" data-id="1">ID</div>
-                            <div class="list-group-item" data-id="2">Nombre</div>
-                            <div class="list-group-item" data-id="3">Email</div>
-                            <div class="list-group-item" data-id="4">Teléfono</div>
-                            <div class="list-group-item" data-id="5">Fecha Registro</div>
-                            <div class="list-group-item" data-id="1">ID</div>
-                            <div class="list-group-item" data-id="2">Nombre</div>
-                            <div class="list-group-item" data-id="3">Email</div>
-                            <div class="list-group-item" data-id="4">Teléfono</div>
-                            <div class="list-group-item" data-id="5">Fecha Registro</div>
+
+                <div class="row">
+                    <div class="col-lg-5">
+                        <div class="d-flex justify-content-between my-2">
+                            <h6>Columnas disponibles</h6>
+                            <button id="btnMoverTodoDerecha" class="btn btn-sm btn-outline-secondary">Mover todo <i
+                                    class="bi bi-arrow-right"></i></button>
                         </div>
+                        <ul class="bg-light card p-3 " id="columnasDisponibles"></ul>
                     </div>
-                    <div class="column border rounded p-2 flex-fill" id="selectedFields">
-                        <h6>Campos a Exportar</h6>
-                        <div class="item list-group" id="column2">
-
+                    <div
+                        class="col-lg-2 d-flex text-center justify-content-center align-items-center justify-content-center">
+                        ⇆ Arrastra o usa el botón
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="d-flex justify-content-between my-2">
+                            <h6>Columnas seleccionadas</h6>
+                            <button id="btnMoverTodoIzquierda" class="btn btn-sm btn-outline-secondary">Mover todo <i
+                                    class="bi bi-arrow-left"></i></button>
                         </div>
+                        <div class="bg-light card p-3" id="columnasSeleccionadas"></div>
+                        <button class="btn btn-success my-2 w-100" id="generarExcel">Generar Excel</button>
                     </div>
+                    <!-- <div class="col-lg-12 my-3">
+                        <h6 class="fw-bold">Vista previa</h6>
+                        <div id="tablaPreview" class="table-responsive"></div>
+                        <button id="btnExportar" class="btn btn-outline-success mt-3 d-none">Exportar Excel</button>
+                    </div> -->
                 </div>
-
-
-
             </div>
             <div class="modal-footer">
-                <button class="btn btn-success" onclick="exportarSeleccion()">Exportar</button>
+                <!-- <button class="btn btn-success" onclick="exportarSeleccion()">Exportar</button> -->
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     Cerrar
                 </button>

@@ -10,40 +10,47 @@
   <link rel="stylesheet" href="<?= BASE_URL ?>views/css/preseleccionado.css" />
   <script src="<?= BASE_URL ?>views/js/sweetalert2.js"></script>
 </head>
+<body class="p-5 bg-light">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">Postulante</li>
+    <li class="breadcrumb-item"><a href="#">Status</a></li>
+  </ol>
 
-<body>
-  <div class="p-5 my-3">
-    <div class="encabezado rounded"></div>
-
-    <!-- <div class="card my-2">
-      <div class="card-body">
-        COMPRESION MIPAYA
-      </div>
-    </div> -->
-
-    <div class="row my-2 row-gap-2">
-      <div class="col-lg-6">
+  <div class="card p-4 shadow-sm my-3">
+    <div class="d-flex justify-content-start my-2 gap-2">
+      <div class="col-lg-4">
         <label class="form-label fw-bold" for="txtBuscarRequerimiento">Buscar Requerimiento</label>
         <input class="form-control border-dark" type="text" placeholder="Buscar requerimiento"
           id="txtBuscarRequerimiento" />
       </div>
-      <div class="col-lg-3 d-flex align-items-end">
-        <button class="w-100 btn btn-outline-dark border-dark">
+      <div class="d-flex align-items-end">
+        <button class="btn btn-outline-dark border-dark">
           <i class="bi bi-search"></i> Buscar requerimiento
         </button>
       </div>
-      <div class="col-lg-3 d-flex align-items-end">
-        <button type="button" class="w-100 btn btn-outline-dark border-dark" data-bs-toggle="modal"
+      <div class="d-flex align-items-end">
+        <button type="button" class="btn btn-outline-dark border-dark" data-bs-toggle="modal"
           data-bs-target="#modalFormularioRequerimiento">
-          <i class="bi bi-plus-circle"></i> Agregar requerimiento
+          <i class="bi bi-plus-circle-fill"></i> Agregar requerimiento
         </button>
       </div>
+      <div class="d-flex align-items-end">
+        <button type="button" class="btn btn-outline-dark border-dark" data-bs-toggle="modal"
+          data-bs-target="#exportExcelPreseRequeModal" onClick="exportarStatusPorRequerimiento()">
+          <i class="bi bi-file-earmark-excel-fill"></i> Exportar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card p-4 shadow-sm my-3">
+    <div class="row my-2 row-gap-2">
       <div class="col p-3">
         <div class="table-responsive">
           <table class="table table-hover">
             <thead class="encabezado text-center text-white">
               <!-- <th>N#</th> -->
-              <th>Fecha de registro</th>
+              <th class="encabezado">Fecha de registro</th>
               <th>Número del requerimiento</th>
               <th>Fecha de requerimiento</th>
               <th>Tipo de requerimiento</th>
@@ -56,9 +63,6 @@
             <tbody>
               <?php foreach ($requerimientos as $index => $requerimiento): ?>
                 <tr class="text-center">
-                  <!-- <td>
-                    <span class="encabezado fw-medium px-3 py-1 rounded text-white"><?= $requerimiento["id_requerimiento"] ?></span>
-                  </td> -->
                   <td><?= $requerimiento["fecha_registro"] ?></td>
                   <td><?= $requerimiento["numero_requerimiento"] ?></td>
                   <td><?= implode("-", array_reverse(explode("-", $requerimiento["fecha_requerimiento"]))) ?></td>
@@ -89,7 +93,8 @@
                       <div class="d-flex justify-content-between align-items-center my-2">
                         <h6 class="text-primary fw-bold mb-3">👥 Personas asignadas:</h6>
                         <button type="button" class="btn btn-outline-dark border-dark" data-bs-toggle="modal"
-                          data-bs-target="#exportExcelPreseRequeModal">
+                          data-bs-target="#exportExcelPreseRequeModal"
+                          onClick="exportarStatusPorRequerimiento('<?= $requerimiento["id_requerimiento"] ?>')">
                           <i class="bi bi-file-earmark-excel-fill"></i> Exportar
                         </button>
                         <!-- <button class="btn btn-outline-success" onClick="exportarStatusPorRequerimiento('<?= $requerimiento["id_requerimiento"] ?>')">
@@ -144,9 +149,7 @@
                                 </button>
                               </div>
                             </div>
-
                           <?php endforeach; ?>
-
                         </div>
                       </div>
                     </div>
@@ -163,8 +166,8 @@
 
   <form id="formExcel" action="api/generarExcelStatus" method="POST" style="display: none;">
     <input type="hidden" name="id_requerimiento" id="inputRequerimientoExcel">
+    <input type="hidden" name="filtro_columnas" id="inputFiltroColumnas">
   </form>
-
 
   <?php include_once "agregarPreseleccionado.php"; ?>
   <?php include_once "formularioRequerimiento.php"; ?>

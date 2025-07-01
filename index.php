@@ -71,6 +71,12 @@ $router->map('POST', '/api/actualizarInformacionPreReque', function() {
     $controller->apiActualizarInformacionPreReque();
 });
 
+$router->map('POST', '/api/actualizarInformacionMedica', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiActualizarInformacionMedica();
+});
+
 $router->map('GET', '/api/obtenerCursosCertificaciones', function() {
     require_once CONTROLLERS_PATH.'/CursoCertificacionController.php';
     $controller = new CursoCertificacionController();
@@ -117,6 +123,12 @@ $router->map('POST', '/api/generarExcelStatus', function() {
     require_once CONTROLLERS_PATH.'/GenerarStatusController.php';
     $controller = new GenerarStatusController();
     $controller->generarExcelStatus();
+});
+
+$router->map('GET', '/api/obtenerNombreColumnas', function() {
+    require_once CONTROLLERS_PATH.'/GenerarStatusController.php';
+    $controller = new GenerarStatusController();
+    $controller->apiObtenerNombreColumnas();
 });
 
 $match = $router->match();

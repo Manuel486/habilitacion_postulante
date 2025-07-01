@@ -203,7 +203,8 @@ async function cargarDatosPreseleccionado(
     llenarInformacionPreReque(data.respuesta.preseleccionado_requerimiento[0]);
     llenarCamposCursosCertificados(data.respuesta.cursos, "curso");
     llenarCamposCursosCertificados(data.respuesta.certificados, "certificado");
-
+    llenarInformacionMedica(data.respuesta.preseleccionado_requerimiento[0]);
+    
     await llenarHistorialProyectos(data.respuesta.documento);
 
     Swal.close();
@@ -236,29 +237,35 @@ const obtenerCursosCertificaciones = async () => {
 
 obtenerCursosCertificaciones();
 
-function llenarCamposAlertasCurCert(alertas_cur_cert){
-  const alertasPreseleccionado = document.getElementById("alertasPreseleccionado");
+function llenarCamposAlertasCurCert(alertas_cur_cert) {
+  const alertasPreseleccionado = document.getElementById(
+    "alertasPreseleccionado"
+  );
   alertasPreseleccionado.innerHTML = "";
 
-  alertas = alertas_cur_cert.filter(alerta => (
-    alerta.estado == "caduco" || alerta.estado == "cerca"
-  ));
+  alertas = alertas_cur_cert.filter(
+    (alerta) => alerta.estado == "caduco" || alerta.estado == "cerca"
+  );
 
-  if(alertas.length < 0) return;
+  if (alertas.length < 0) return;
 
-  alertas.forEach(alerta => {
+  alertas = alertas.slice(0, 5);
+  alertas.every((alerta, i) => {
     const div = document.createElement("div");
     div.innerHTML = `
-      <div class="alert alert-${alerta.estado == "caduco" ? "danger":"warning"} fw-6" role="alert">
+      <div class="alert alert-${
+        alerta.estado == "caduco" ? "danger" : "warning"
+      } fw-6" role="alert">
           ${
-            alerta.estado == "caduco" ?
-              `El ${alerta.nombre} ya caducó`:
-              `El ${alerta.nombre} esta cerca a caducar`
+            alerta.estado == "caduco"
+              ? `El ${alerta.nombre} ya caducó`
+              : `El ${alerta.nombre} esta cerca a caducar`
           }
       </div>
     `;
     alertasPreseleccionado.append(div);
-  })
+    return true;
+  });
 }
 
 function llenarCamposDatosGenerales(preseleccionado) {
@@ -365,45 +372,75 @@ function llenarCamposCursosCertificados(items, tipo) {
   });
 }
 
-async function eliminarCursoCertificado(fila, item, tipo, btnEliminar) {
-  try {
-    btnEliminar.disabled = true;
-    btnEliminar.textContent = "Eliminando...";
+function llenarInformacionMedica(informacion_medica) {
+  const txt4taVacuna = document.getElementById("txt4taVacuna");
+  const txtFechaExamenMedico = document.getElementById("txtFechaExamenMedico");
+  const sltClinica = document.getElementById("sltClinica");
+  const txtResultado = document.getElementById("txtResultado");
+  const txtPaseMedico = document.getElementById("txtPaseMedico");
+  const txtPM = document.getElementById("txtPM");
+  const txtInformeMedico = document.getElementById("txtInformeMedico");
 
-    let formData = new FormData();
-    formData.append("id_prese_curs_certi", item.id_prese_curs_certi);
-
-    const resp = await fetch("api/eliminarCursCertPreseleccionado", {
-      method: "POST",
-      body: formData,
-    });
-    const data = await resp.json();
-
-    if (data.exitoso) {
-      Swal.fire({
-        icon: "success",
-        title: "Éxito",
-        text: data.mensaje,
-      });
-      fila.remove();
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al realizar la acción",
-        text: data.mensaje,
-      });
-    }
-  } catch (error) {
-    console.error(error);
-    Swal.fire({
-      icon: "error",
-      title: "Error al realizar la acción",
-      text: data.mensaje,
-    });
-  } finally {
-    btnEliminar.disabled = false;
-    btnEliminar.textContent = "Eliminar";
+  txt4taVacuna.value = informacion_medica.cuarta_vacuna;
+  txtFechaExamenMedico.value = informacion_medica.fecha_examen_medico;
+  if(informacion_medica.clinica !== null){
+    sltClinica.value = informacion_medica.clinica;
   }
+  txtResultado.value = informacion_medica.resultado;
+  txtPaseMedico.value = informacion_medica.pase_medico;
+  txtPM.value = informacion_medica.pm;
+  txtInformeMedico.value = informacion_medica.informe_medico;
+}
+
+async function eliminarCursoCertificado(fila, item, tipo, btnEliminar) {
+  Swal.fire({
+    icon: "warning",
+    title: "Advertencia",
+    text: "¿Está seguro de eliminarlo?",
+    showCancelButton: true,
+    confirmButtonText: "Sí",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        btnEliminar.disabled = true;
+        btnEliminar.textContent = "Eliminando...";
+
+        let formData = new FormData();
+        formData.append("id_prese_curs_certi", item.id_prese_curs_certi);
+
+        const resp = await fetch("api/eliminarCursCertPreseleccionado", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await resp.json();
+
+        if (data.exitoso) {
+          Swal.fire({
+            icon: "success",
+            title: "Éxito",
+            text: data.mensaje,
+          });
+          fila.remove();
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error al realizar la acción",
+            text: data.mensaje,
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          icon: "error",
+          title: "Error al realizar la acción",
+          text: data.mensaje,
+        });
+      } finally {
+        btnEliminar.disabled = false;
+        btnEliminar.textContent = "Eliminar";
+      }
+    }
+  });
 }
 
 function editarCursoCertificado(fila, item, tipo) {
@@ -735,6 +772,9 @@ document.getElementById("requerimientoModal").addEventListener("click", (e) => {
     guardarInformacionPreseleRequerimiento();
   }
 
+  if (e.target.matches("#btnActualizarInforMedica")) {
+    guardarInforemacionPreseleMedica();
+  }
   if (
     e.target.closest("#tblCursosPreseleccionado") &&
     e.target.classList.contains("btnEliminarCurso")
@@ -753,41 +793,52 @@ document.getElementById("requerimientoModal").addEventListener("click", (e) => {
 async function eliminarPreseDelReque(btn, idPreseleccionado, idRequerimiento) {
   const btnEliminar = document.getElementById("eliminarPreReque");
   const fila = btn.closest(".filaPreseleecionado");
-  try {
-    btnEliminar.disabled = true;
-    let formData = new FormData();
-    formData.append("id_preseleccionado", idPreseleccionado);
-    formData.append("id_requerimiento", idRequerimiento);
-    const resp = await fetch("api/eliminarPreseRequer", {
-      method: "POST",
-      body: formData,
-    });
-    const data = await resp.json();
 
-    if (data.exitoso) {
-      Swal.fire({
-        icon: "success",
-        title: "Éxito",
-        text: data.mensaje,
-      });
-      fila.remove();
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al realizar la acción",
-        text: data.mensaje,
-      });
+  Swal.fire({
+    icon: "warning",
+    title: "Advertencia",
+    text: "¿Está seguro de eliminarlo?",
+    showCancelButton: true,
+    confirmButtonText: "Sí",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        btnEliminar.disabled = true;
+        let formData = new FormData();
+        formData.append("id_preseleccionado", idPreseleccionado);
+        formData.append("id_requerimiento", idRequerimiento);
+        const resp = await fetch("api/eliminarPreseRequer", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await resp.json();
+
+        if (data.exitoso) {
+          Swal.fire({
+            icon: "success",
+            title: "Éxito",
+            text: data.mensaje,
+          });
+          fila.remove();
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error al realizar la acción",
+            text: data.mensaje,
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          icon: "error",
+          title: "Error al realizar la acción",
+          text: data.mensaje,
+        });
+      } finally {
+        btnEliminar.disabled = false;
+      }
     }
-  } catch (error) {
-    console.error(error);
-    Swal.fire({
-      icon: "error",
-      title: "Error al realizar la acción",
-      text: data.mensaje,
-    });
-  } finally {
-    btnEliminar.disabled = false;
-  }
+  });
 }
 
 async function guardarInformacionPreseleRequerimiento() {
@@ -885,6 +936,68 @@ async function guardarInformacionPreseleRequerimiento() {
   }
 }
 
+async function guardarInforemacionPreseleMedica() {
+  const btnActualizarInforMedica = document.getElementById(
+    "btnActualizarInforMedica"
+  );
+
+  btnActualizarInforMedica.disabled = true;
+  btnActualizarInforMedica.textContent = "Guardando...";
+
+  const txt4taVacuna = document.getElementById("txt4taVacuna");
+  const txtFechaExamenMedico = document.getElementById("txtFechaExamenMedico");
+  const sltClinica = document.getElementById("sltClinica");
+  const txtResultado = document.getElementById("txtResultado");
+  const txtPaseMedico = document.getElementById("txtPaseMedico");
+  const txtPM = document.getElementById("txtPM");
+  const txtInformeMedico = document.getElementById("txtInformeMedico");
+
+  let informacionMedica = {
+    id_reque_proy: idRequerimiento,
+    id_preseleccionado: idPreseleccionado,
+    cuarta_vacuna: txt4taVacuna.value,
+    fecha_examen_medico: txtFechaExamenMedico.value,
+    clinica: sltClinica.value,
+    resultado: txtResultado.value,
+    pase_medico: txtPaseMedico.value,
+    pm: txtPM.value,
+    informe_medico: txtInformeMedico.value,
+  };
+
+  try {
+    let formData = new FormData();
+    formData.append("informacion_medica", JSON.stringify(informacionMedica));
+    const resp = await fetch("api/actualizarInformacionMedica", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await resp.json();
+    if (data.exitoso) {
+      Swal.fire({
+        icon: "success",
+        title: "Éxito",
+        text: data.mensaje,
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error al realizar la acción",
+        text: data.mensaje,
+      });
+    }
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Error al realizar la acción",
+      text: data.mensaje,
+    });
+  } finally {
+    btnActualizarInforMedica.disabled = false;
+    btnActualizarInforMedica.innerHTML = `
+      <i class="bi bi-floppy-fill"></i> Guardar información`;
+  }
+}
+
 function camposValidosActualizarPreseleccionado() {
   let campos = [
     "txtApellidosNombresActualizar",
@@ -923,29 +1036,3 @@ const modalElement = document.getElementById("requerimientoModal");
 modalElement.addEventListener("hidden.bs.modal", function () {
   modalElement.innerHTML = estadoInicialModal;
 });
-
-async function exportarStatusPorRequerimiento(idRequerimiento) {
-  document.getElementById("inputRequerimientoExcel").value = idRequerimiento;
-  document.getElementById("formExcel").submit();
-}
-
-
-new Sortable(document.getElementById("column1"), {
-  group: "shared",
-  animation: 150,
-});
-
-new Sortable(document.getElementById("column2"), {
-  group: "shared",
-  animation: 150,
-});
-
-function exportarSeleccion() {
-  const seleccionados = [];
-  document.querySelectorAll("#column2 .list-group-item").forEach((el) => {
-    seleccionados.push(el.textContent.trim());
-  });
-
-  // Aquí puedes hacer una petición AJAX o descargar Excel, etc.
-  alert("Campos seleccionados para exportar:\n" + seleccionados.join(", "));
-}

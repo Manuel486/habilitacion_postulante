@@ -8,66 +8,78 @@ class PreseleccionadoModel
     {
     }
 
-    public function obtenerPreseleccionados($idRequerimiento)
+    public function obtenerPreseleccionados($whereIdRequerimiento,$executeRequerimiento)
     {
         $pdo = ConexionDocumentos::getInstancia()->getConexion();
         try {
-            // Paso 1: Generar columnas dinámicas de cursos (si existen)
             $sqlCols = "
-            SELECT GROUP_CONCAT(DISTINCT
-                CONCAT(
-                    'MAX(CASE WHEN cc.nombre = ''',
-                    cc.nombre,
-                    ''' THEN DATE_FORMAT(pcc.fecha_inicio, \"%Y-%m-%d\") END) AS `',
-                    cc.nombre,
-                    '`'
-                )
-            ) AS columnas
-            FROM curso_certificacion cc
-        ";
+                SELECT GROUP_CONCAT(DISTINCT
+                    CONCAT(
+                        'MAX(CASE WHEN cc.nombre = ''',
+                        cc.nombre,
+                        ''' THEN DATE_FORMAT(pcc.fecha_inicio, \"%d-%m-%Y\") END) AS `',
+                        cc.nombre,
+                        '`'
+                    )
+                ) AS columnas
+                FROM curso_certificacion cc";
 
             $stmtCols = $pdo->query($sqlCols);
             $columnasCursos = $stmtCols->fetchColumn();
 
-            // Si no hay cursos, las columnas serán vacías
-            $columnasCursos = $columnasCursos ?: ""; // Asigna cadena vacía si no hay resultados
+            $columnasCursos = $columnasCursos ?: "";
 
-            // Paso 2: Armar la consulta base + columnas dinámicas si existen
             $sql = "
             SELECT
-                rp.id_requerimiento,
-                rp.fecha_requerimiento,
-                rp.numero_requerimiento,
-                rp.tipo_requerimiento,
-                rp.id_fase,
-                rp.id_cargo,
-                rp.cantidad,
-                rp.regimen,
-                p.apellidos_nombres,
-                p.documento,
-                p.fecha_nacimiento,
-                p.edad,
-                p.exactian,
-                p.fecha_ingreso_ultimo_proyecto,
-                p.fecha_cese_ultimo_proyecto,
-                p.nombre_ultimo_proyecto,
-                p.telefono_1,
-                p.telefono_2,
-                p.email
+                rp.id_requerimiento AS 'Id del requerimiento',
+                DATE_FORMAT(rp.fecha_requerimiento, \"%d-%m-%Y\") AS 'Fecha requerimiento',
+                rp.numero_requerimiento AS 'Numero del requerimiento',
+                rp.tipo_requerimiento AS 'Tipo de requerimiento',
+                gf.descripcion AS 'Fase',
+                gc.descripcion AS 'Cargo',
+                rp.cantidad AS 'Cantidad',
+                rp.regimen AS 'Regimen',
+                p.apellidos_nombres AS 'Nombre completo',
+                p.documento AS 'Documento',
+                p.fecha_nacimiento AS 'Fecha de nacimiento',
+                p.edad AS 'Edad',
+                p.exactian AS 'Exactian',
+                p.fecha_ingreso_ultimo_proyecto AS 'Fecha ingreso ultimo proyecto',
+                p.fecha_cese_ultimo_proyecto AS 'Fecha cese ultimo proyecto',
+                p.nombre_ultimo_proyecto AS 'Nombre ultimo proyecto',
+                p.telefono_1 AS 'Telefono 1',
+                p.telefono_2 AS 'Telefono 2',
+                p.email AS 'Email',
+                pr.cuarta_vacuna AS '4ta Vacuna',
+                pr.fecha_examen_medico AS 'Fecha examen medico',
+                pr.clinica AS 'Clinica',
+                pr.resultado AS 'Resultado',
+                pr.pase_medico AS 'Pase medico',
+                p.departamento_residencia AS 'Departamento residencia',
+                pr.pm AS 'PM',
+                pr.informe_medico AS 'Informe medico',
+                pr.poliza AS 'POLIZA',
+                pr.viabilidad AS 'VIABILIDAD',
+                pr.observacion AS 'OBSERVACION',
+                pr.ingreso_obra AS 'INGRESO A OBRA',
+                pr.estado AS 'ESTADO',
+                pr.observacion2 AS 'OBSERVACION 2',
+                pr.alfa AS 'ALFA',
+                pr.viabilidad2 AS 'VIABILIDAD2',
+                pr.rrhh AS 'RR.HH'
                 " . ($columnasCursos ? ", $columnasCursos" : "") . "
             FROM preseleccionado_requerimiento pr
             LEFT JOIN requerimiento_proyecto rp ON rp.id_requerimiento = pr.id_reque_proy
             LEFT JOIN preseleccionado p ON p.id_preseleccionado = pr.id_preseleccionado
             LEFT JOIN preseleccionado_curso_certificacion pcc ON pcc.id_preseleccionado = p.id_preseleccionado
             LEFT JOIN curso_certificacion cc ON cc.id_curso_certificacion = pcc.id_curs_certi
-            WHERE pr.id_reque_proy = :id_requerimiento
-            GROUP BY rp.id_requerimiento, p.id_preseleccionado
-        ";
+            LEFT JOIN general gf ON gf.cod = rp.id_fase AND gf.clase='09'
+            LEFT JOIN general gc ON gc.cod = rp.id_cargo AND gc.clase='01'
+            $whereIdRequerimiento
+            GROUP BY rp.id_requerimiento, p.id_preseleccionado";
 
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                "id_requerimiento" => $idRequerimiento
-            ]);
+            $stmt->execute($executeRequerimiento);
             $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if (empty($resultados)) {
@@ -81,6 +93,93 @@ class PreseleccionadoModel
         }
     }
 
+    public function obtenerNombreColumnas()
+    {
+        $pdo = ConexionDocumentos::getInstancia()->getConexion();
+        try {
+            $sqlCols = "
+                SELECT GROUP_CONCAT(DISTINCT
+                    CONCAT(
+                        'MAX(CASE WHEN cc.nombre = ''',
+                        cc.nombre,
+                        ''' THEN DATE_FORMAT(pcc.fecha_inicio, \"%d-%m-%Y\") END) AS `',
+                        cc.nombre,
+                        '`'
+                    )
+                ) AS columnas
+                FROM curso_certificacion cc";
+
+            $stmtCols = $pdo->query($sqlCols);
+            $columnasCursos = $stmtCols->fetchColumn();
+
+            $columnasCursos = $columnasCursos ?: "";
+
+            $sql = "
+            SELECT
+                rp.id_requerimiento AS 'Id del requerimiento',
+                DATE_FORMAT(rp.fecha_requerimiento, \"%d-%m-%Y\") AS 'Fecha requerimiento',
+                rp.numero_requerimiento AS 'Numero del requerimiento',
+                rp.tipo_requerimiento AS 'Tipo de requerimiento',
+                gf.descripcion AS 'Fase',
+                gc.descripcion AS 'Cargo',
+                rp.cantidad AS 'Cantidad',
+                rp.regimen AS 'Regimen',
+                p.apellidos_nombres AS 'Nombre completo',
+                p.documento AS 'Documento',
+                p.fecha_nacimiento AS 'Fecha de nacimiento',
+                p.edad AS 'Edad',
+                p.exactian AS 'Exactian',
+                p.fecha_ingreso_ultimo_proyecto AS 'Fecha ingreso ultimo proyecto',
+                p.fecha_cese_ultimo_proyecto AS 'Fecha cese ultimo proyecto',
+                p.nombre_ultimo_proyecto AS 'Nombre ultimo proyecto',
+                p.telefono_1 AS 'Telefono 1',
+                p.telefono_2 AS 'Telefono 2',
+                p.email AS 'Email',
+                pr.cuarta_vacuna AS '4ta Vacuna',
+                pr.fecha_examen_medico AS 'Fecha examen medico',
+                pr.clinica AS 'Clinica',
+                pr.resultado AS 'Resultado',
+                pr.pase_medico AS 'Pase medico',
+                p.departamento_residencia AS 'Departamento residencia',
+                pr.pm AS 'PM',
+                pr.informe_medico AS 'Informe medico',
+                pr.poliza AS 'POLIZA',
+                pr.viabilidad AS 'VIABILIDAD',
+                pr.observacion AS 'OBSERVACION',
+                pr.ingreso_obra AS 'INGRESO A OBRA',
+                pr.estado AS 'ESTADO',
+                pr.observacion2 AS 'OBSERVACION 2',
+                pr.alfa AS 'ALFA',
+                pr.viabilidad2 AS 'VIABILIDAD2',
+                pr.rrhh AS 'RR.HH'
+                " . ($columnasCursos ? ", $columnasCursos" : "") . "
+            FROM preseleccionado_requerimiento pr
+            LEFT JOIN requerimiento_proyecto rp ON rp.id_requerimiento = pr.id_reque_proy
+            LEFT JOIN preseleccionado p ON p.id_preseleccionado = pr.id_preseleccionado
+            LEFT JOIN preseleccionado_curso_certificacion pcc ON pcc.id_preseleccionado = p.id_preseleccionado
+            LEFT JOIN curso_certificacion cc ON cc.id_curso_certificacion = pcc.id_curs_certi
+            LEFT JOIN general gf ON gf.cod = rp.id_fase AND gf.clase='09'
+            LEFT JOIN general gc ON gc.cod = rp.id_cargo AND gc.clase='01'
+            GROUP BY rp.id_requerimiento, p.id_preseleccionado
+            LIMIT 0";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $columnas = [];
+            $columnCount = $stmt->columnCount();
+
+            for ($i = 0; $i < $columnCount; $i++) {
+                $meta = $stmt->getColumnMeta($i);
+                $columnas[] = $meta['name'];              
+            }
+
+            return $columnas;
+        } catch (Exception $e) {
+            echo "Error: " . $e->getMessage();
+            return [];
+        }
+    }
+
     public function obtenerPorDocumento($documento)
     {
         $pdo = ConexionDocumentos::getInstancia()->getConexion();
@@ -88,7 +187,7 @@ class PreseleccionadoModel
             $sql = "SELECT * FROM preseleccionado WHERE documento = :documento";
             $statement = $pdo->prepare($sql);
             $statement->execute([
-                ":documento" => $documento
+                "documento" => $documento
             ]);
             return $statement->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -105,8 +204,8 @@ class PreseleccionadoModel
                 AND id_reque_proy = :id_requerimiento";
             $statement = $pdo->prepare($sql);
             $statement->execute([
-                ":id_preseleccionado" => $id_preseleccionado,
-                ":id_requerimiento" => $id_requerimiento
+                "id_preseleccionado" => $id_preseleccionado,
+                "id_requerimiento" => $id_requerimiento
             ]);
             return $statement->fetchColumn() !== false;
         } catch (PDOException $e) {
@@ -173,7 +272,7 @@ class PreseleccionadoModel
                     pr.id_reque_proy = :id_reque_proy";
             $statement = $pdo->prepare($sql);
             $statement->execute([
-                ":id_reque_proy" => $idRequerimiento
+                "id_reque_proy" => $idRequerimiento
             ]);
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -228,19 +327,19 @@ class PreseleccionadoModel
 
             $statement = $pdo->prepare($sql);
             $statement->execute([
-                ":id_preseleccionado" => $preseleccionado["id_preseleccionado"],
-                ":apellidos_nombres" => $preseleccionado["apellidos_nombres"],
-                ":documento" => $preseleccionado["documento"],
-                ":fecha_nacimiento" => $preseleccionado["fecha_nacimiento"],
-                ":edad" => $preseleccionado["edad"],
-                ":exactian" => $preseleccionado["exactian"] ?? "",
-                ":fecha_ingreso_ultimo_proyecto" => $preseleccionado["fecha_ingreso_ultimo_proyecto"] ?? "",
-                ":fecha_cese_ultimo_proyecto" => $preseleccionado["fecha_cese_ultimo_proyecto"] ?? "",
-                ":nombre_ultimo_proyecto" => $preseleccionado["nombre_ultimo_proyecto"] ?? "",
-                ":telefono_1" => $preseleccionado["telefono_1"] ?? "",
-                ":telefono_2" => $preseleccionado["telefono_2"] ?? "",
-                ":email" => $preseleccionado["email"],
-                ":departamento_residencia" => $preseleccionado["departamento_residencia"] ?? ""
+                "id_preseleccionado" => $preseleccionado["id_preseleccionado"],
+                "apellidos_nombres" => $preseleccionado["apellidos_nombres"],
+                "documento" => $preseleccionado["documento"],
+                "fecha_nacimiento" => $preseleccionado["fecha_nacimiento"],
+                "edad" => $preseleccionado["edad"],
+                "exactian" => $preseleccionado["exactian"] ?? "",
+                "fecha_ingreso_ultimo_proyecto" => $preseleccionado["fecha_ingreso_ultimo_proyecto"] ?? "",
+                "fecha_cese_ultimo_proyecto" => $preseleccionado["fecha_cese_ultimo_proyecto"] ?? "",
+                "nombre_ultimo_proyecto" => $preseleccionado["nombre_ultimo_proyecto"] ?? "",
+                "telefono_1" => $preseleccionado["telefono_1"] ?? "",
+                "telefono_2" => $preseleccionado["telefono_2"] ?? "",
+                "email" => $preseleccionado["email"],
+                "departamento_residencia" => $preseleccionado["departamento_residencia"] ?? ""
             ]);
 
             return $statement->rowCount() > 0;
@@ -272,19 +371,19 @@ class PreseleccionadoModel
             $statement = $pdo->prepare($sql);
 
             $success = $statement->execute([
-                ":id_preseleccionado" => $preseleccionado["id_preseleccionado"],
-                ":apellidos_nombres" => $preseleccionado["apellidos_nombres"],
-                ":documento" => $preseleccionado["documento"],
-                ":fecha_nacimiento" => $preseleccionado["fecha_nacimiento"],
-                ":edad" => $preseleccionado["edad"],
-                ":exactian" => $preseleccionado["exactian"] ?? "",
-                ":fecha_ingreso_ultimo_proyecto" => $preseleccionado["fecha_ingreso_ultimo_proyecto"] ?? "",
-                ":fecha_cese_ultimo_proyecto" => $preseleccionado["fecha_cese_ultimo_proyecto"] ?? "",
-                ":nombre_ultimo_proyecto" => $preseleccionado["nombre_ultimo_proyecto"] ?? "",
-                ":telefono_1" => $preseleccionado["telefono_1"] ?? "",
-                ":telefono_2" => $preseleccionado["telefono_2"] ?? "",
-                ":email" => $preseleccionado["email"],
-                ":departamento_residencia" => $preseleccionado["departamento_residencia"] ?? ""
+                "id_preseleccionado" => $preseleccionado["id_preseleccionado"],
+                "apellidos_nombres" => $preseleccionado["apellidos_nombres"],
+                "documento" => $preseleccionado["documento"],
+                "fecha_nacimiento" => $preseleccionado["fecha_nacimiento"],
+                "edad" => $preseleccionado["edad"],
+                "exactian" => $preseleccionado["exactian"] ?? "",
+                "fecha_ingreso_ultimo_proyecto" => $preseleccionado["fecha_ingreso_ultimo_proyecto"] ?? "",
+                "fecha_cese_ultimo_proyecto" => $preseleccionado["fecha_cese_ultimo_proyecto"] ?? "",
+                "nombre_ultimo_proyecto" => $preseleccionado["nombre_ultimo_proyecto"] ?? "",
+                "telefono_1" => $preseleccionado["telefono_1"] ?? "",
+                "telefono_2" => $preseleccionado["telefono_2"] ?? "",
+                "email" => $preseleccionado["email"],
+                "departamento_residencia" => $preseleccionado["departamento_residencia"] ?? ""
             ]);
 
             return $success;
@@ -313,17 +412,17 @@ class PreseleccionadoModel
             $statement = $pdo->prepare($sql);
 
             $success = $statement->execute([
-                ":id_preseleccionado" => $preseleccionado_requerimiento["id_preseleccionado"],
-                ":id_reque_proy" => $preseleccionado_requerimiento["id_reque_proy"],
-                ":poliza" => $preseleccionado_requerimiento["poliza"] ?? "",
-                ":viabilidad" => $preseleccionado_requerimiento["viabilidad"] ?? "",
-                ":observacion" => $preseleccionado_requerimiento["observacion"] ?? "",
-                ":ingreso_obra" => $preseleccionado_requerimiento["ingreso_obra"] ?? "",
-                ":estado" => $preseleccionado_requerimiento["estado"] ?? "",
-                ":observacion2" => $preseleccionado_requerimiento["observacion2"] ?? "",
-                ":alfa" => $preseleccionado_requerimiento["alfa"] ?? "",
-                ":viabilidad2" => $preseleccionado_requerimiento["viabilidad2"] ?? "",
-                ":rrhh" => $preseleccionado_requerimiento["rrhh"] ?? ""
+                "id_preseleccionado" => $preseleccionado_requerimiento["id_preseleccionado"],
+                "id_reque_proy" => $preseleccionado_requerimiento["id_reque_proy"],
+                "poliza" => $preseleccionado_requerimiento["poliza"] ?? "",
+                "viabilidad" => $preseleccionado_requerimiento["viabilidad"] ?? "",
+                "observacion" => $preseleccionado_requerimiento["observacion"] ?? "",
+                "ingreso_obra" => $preseleccionado_requerimiento["ingreso_obra"] ?? "",
+                "estado" => $preseleccionado_requerimiento["estado"] ?? "",
+                "observacion2" => $preseleccionado_requerimiento["observacion2"] ?? "",
+                "alfa" => $preseleccionado_requerimiento["alfa"] ?? "",
+                "viabilidad2" => $preseleccionado_requerimiento["viabilidad2"] ?? "",
+                "rrhh" => $preseleccionado_requerimiento["rrhh"] ?? ""
             ]);
 
             return $success;
@@ -331,6 +430,42 @@ class PreseleccionadoModel
             return false;
         }
     }
+
+    public function actualizarPreseleccionadoRequerimientoInfMedica($informacion_medica)
+    {
+        $pdo = ConexionDocumentos::getInstancia()->getConexion();
+        try {
+            $sql = "UPDATE preseleccionado_requerimiento SET 
+                        cuarta_vacuna=:cuarta_vacuna,
+                        fecha_examen_medico=:fecha_examen_medico,
+                        clinica=:clinica,
+                        resultado=:resultado,
+                        pase_medico=:pase_medico,
+                        pm=:pm,
+                        informe_medico=:informe_medico
+                    WHERE id_preseleccionado=:id_preseleccionado
+                    AND id_reque_proy=:id_reque_proy";
+
+            $statement = $pdo->prepare($sql);
+
+            $success = $statement->execute([
+                "id_preseleccionado" => $informacion_medica["id_preseleccionado"],
+                "id_reque_proy" => $informacion_medica["id_reque_proy"],
+                "cuarta_vacuna" => $informacion_medica["cuarta_vacuna"] ?? "",
+                "fecha_examen_medico" => $informacion_medica["fecha_examen_medico"] ?? "",
+                "clinica" => $informacion_medica["clinica"] ?? "",
+                "resultado" => $informacion_medica["resultado"] ?? "",
+                "pase_medico" => $informacion_medica["pase_medico"] ?? "",
+                "pm" => $informacion_medica["pm"] ?? "",
+                "informe_medico" => $informacion_medica["informe_medico"] ?? "",
+            ]);
+
+            return $success;
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
 
     public function insertarPreseleccionadoRequerimiento($idRequerimiento, $idPreseleccionado)
     {
@@ -396,22 +531,6 @@ class PreseleccionadoModel
         }
     }
 
-
-
-    //     public function eliminarFase($id)
-    // {
-    //     $pdo = ConexionDocumentos::getInstancia()->getConexion();
-    //     try {
-    //         $sql = "DELETE FROM general WHERE id = :id AND clase = '09'";
-    //         $statement = $pdo->prepare($sql);
-    //         $statement->execute([':id' => $id]);
-
-    //         return $statement->rowCount() > 0;
-    //     } catch (PDOException $e) {
-    //         return false;
-    //     }
-    // }
-
     public function contarPreseleccionadosCubiertosPorRequerimiento($idRequerimiento)
     {
         $pdo = ConexionDocumentos::getInstancia()->getConexion();
@@ -420,7 +539,7 @@ class PreseleccionadoModel
             $statement = $pdo->prepare($sql);
 
             $statement->execute([
-                ":id_reque_proy" => $idRequerimiento
+                "id_reque_proy" => $idRequerimiento
             ]);
             $cantidad = $statement->fetchColumn();
             return $cantidad;
@@ -442,8 +561,8 @@ class PreseleccionadoModel
 
             $statement = $pdo->prepare($sql);
             $statement->execute([
-                ":id_preseleccionado" => $idPreseleccionado,
-                ":tipo" => $tipo,
+                "id_preseleccionado" => $idPreseleccionado,
+                "tipo" => $tipo,
             ]);
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -460,8 +579,8 @@ class PreseleccionadoModel
 
             $statement = $pdo->prepare($sql);
             $statement->execute([
-                ":id_preseleccionado" => $idPreseleccionado,
-                ":id_reque_proy" => $idRequerimiento,
+                "id_preseleccionado" => $idPreseleccionado,
+                "id_reque_proy" => $idRequerimiento,
             ]);
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -490,7 +609,7 @@ class PreseleccionadoModel
                     WHERE pcc.id_preseleccionado=:id_preseleccionado";
             $statement = $pdo->prepare($sql);
             $statement->execute([
-                ":id_preseleccionado" => $idPreseleccionado
+                "id_preseleccionado" => $idPreseleccionado
             ]);
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         }catch(PDOException $e){
@@ -510,7 +629,7 @@ class PreseleccionadoModel
 
             $statement = $pdo->prepare($sql);
             $statement->execute([
-                ":id_prese_curs_certi" => $idPreseCursCerti
+                "id_prese_curs_certi" => $idPreseCursCerti
             ]);
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -539,11 +658,11 @@ class PreseleccionadoModel
             $statement = $pdo->prepare($sql);
 
             $statement->execute([
-                ":id_prese_curs_certi" => $pre_cur_cert["id_prese_curs_certi"],
-                ":id_preseleccionado" => $pre_cur_cert["id_preseleccionado"],
-                ":id_curs_certi" => $pre_cur_cert["id_curs_certi"],
-                ":fecha_inicio" => $pre_cur_cert["fecha_inicio"],
-                ":fecha_fin" => $pre_cur_cert["fecha_fin"]
+                "id_prese_curs_certi" => $pre_cur_cert["id_prese_curs_certi"],
+                "id_preseleccionado" => $pre_cur_cert["id_preseleccionado"],
+                "id_curs_certi" => $pre_cur_cert["id_curs_certi"],
+                "fecha_inicio" => $pre_cur_cert["fecha_inicio"],
+                "fecha_fin" => $pre_cur_cert["fecha_fin"]
             ]);
 
             return $statement->rowCount() > 0;
@@ -561,9 +680,9 @@ class PreseleccionadoModel
             $statement = $pdo->prepare($sql);
 
             $statement->execute([
-                ":id_prese_curs_certi" => $pre_cur_cert["id_prese_curs_certi"],
-                ":fecha_inicio" => $pre_cur_cert["fecha_inicio"],
-                ":fecha_fin" => $pre_cur_cert["fecha_fin"]
+                "id_prese_curs_certi" => $pre_cur_cert["id_prese_curs_certi"],
+                "fecha_inicio" => $pre_cur_cert["fecha_inicio"],
+                "fecha_fin" => $pre_cur_cert["fecha_fin"]
             ]);
 
             return $statement->rowCount() > 0;

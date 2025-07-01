@@ -265,8 +265,27 @@ class ProyectosController
         $preseleccionado = json_decode($_POST["preseleccionado"], true);
         $preseleccionado_requerimiento = json_decode($_POST["preseleccionado_requerimiento"], true);
 
-        // $respuesta = $this->preseleccionadoModel->actualizarPreseleccionado($preseleccionado);
+        $respuesta = $this->preseleccionadoModel->actualizarPreseleccionado($preseleccionado);
         $respuesta = $this->preseleccionadoModel->actualizarPreseleccionadoRequerimiento($preseleccionado_requerimiento);
+
+        if ($respuesta) {
+            echo ApiRespuesta::exitoso("", "Actualizado con éxito.");
+        } else {
+            echo ApiRespuesta::error("No se pudo actualizar.");
+        }
+
+    }
+
+    public function apiActualizarInformacionMedica()
+    {
+        if (!isset($_POST["informacion_medica"])) {
+            echo ApiRespuesta::error("Debe enviar la información médica");
+            exit;
+        }
+
+        $informacion_medica = json_decode($_POST["informacion_medica"],true);
+        
+        $respuesta = $this->preseleccionadoModel->actualizarPreseleccionadoRequerimientoInfMedica($informacion_medica);
 
         if ($respuesta) {
             echo ApiRespuesta::exitoso("", "Actualizado con éxito.");
