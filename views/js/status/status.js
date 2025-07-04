@@ -32,33 +32,6 @@ document
     items.forEach((item) => columnasDisponibles.appendChild(item));
   });
 
-// document.getElementById("generarExcel").addEventListener("click", () => {
-//   const seleccionadas = Array.from(columnasSeleccionadas.children).map(
-//     (el) => el.dataset.nombre
-//   );
-
-//   if (seleccionadas.length === 0) {
-//     alert("Selecciona al menos una columna.");
-//     return;
-//   }
-
-//   let html = `<table class="table table-bordered"><thead class="table-light"><tr>`;
-//   seleccionadas.forEach((nombre) => (html += `<th>${nombre}</th>`));
-//   html += `</tr></thead><tbody>`;
-
-//   //   datosEjemplo.forEach((row) => {
-//   //     html += `<tr>`;
-//   //     seleccionadas.forEach((k) => (html += `<td>${row[k] ?? ""}</td>`));
-//   //     html += `</tr>`;
-//   //   });
-
-//   html += `</tbody></table>`;
-//   document.getElementById("tablaPreview").innerHTML = html;
-//   const exportarBtn = document.getElementById("btnExportar");
-//   exportarBtn.classList.remove("d-none");
-//   exportarBtn.dataset.columnas = JSON.stringify(seleccionadas);
-// });
-
 document.getElementById("generarExcel").addEventListener("click", () => {
   const seleccionadas = Array.from(columnasSeleccionadas.children).map(
     (el) => el.dataset.nombre
@@ -74,11 +47,6 @@ document.getElementById("generarExcel").addEventListener("click", () => {
   document.getElementById("formExcel").submit();
 });
 
-// document.getElementById("btnExportar").addEventListener("click", () => {
-//   const columnasSeleccionadas =
-//     document.getElementById("btnExportar").dataset.columnas;
-// });
-
 async function exportarStatusPorRequerimiento(idRequerimiento) {
   document.getElementById("inputRequerimientoExcel").value =
     idRequerimiento ?? "";
@@ -93,4 +61,148 @@ async function exportarStatusPorRequerimiento(idRequerimiento) {
     li.style.cursor = "move";
     columnasDisponibles.appendChild(li);
   });
+}
+
+async function enviarInvitacion(
+  btnEnviarInvitacion,
+  idPreseleccionadoEnviar,
+  idRequerimientoEnviar
+) {
+  const fila = btnEnviarInvitacion.closest(".filaPreseleecionado");
+  const estadoMensaje = fila.querySelector(".estadoMensaje");
+  const estadoPostulacion = fila.querySelector(".estadoPostulacion");
+  const btnReenviarInvitacion = fila.querySelector(".btnReenviarInvitacion");
+
+  try {
+    Swal.fire({
+      title: "Guardando como postulante y enviando correo.",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    let formData = new FormData();
+    formData.append("id_preseleccionado", idPreseleccionadoEnviar);
+    formData.append("id_requerimiento", idRequerimientoEnviar);
+
+    const resp = await fetch("api/envitarInvitacionPreReque", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await resp.json();
+
+    if (data.exitoso) {
+      const resultado = data.respuesta;
+
+      if (resultado.guardado && resultado.correo_enviado) {
+        Swal.fire({
+          icon: "success",
+          title: "Éxito",
+          text: "Postulante guardado y correo enviado correctamente.",
+        });
+        estadoPostulacion.textContent = "Guardado";
+        estadoPostulacion.classList.remove("text-bg-secondary");
+        estadoPostulacion.classList.add("text-bg-success");
+        btnEnviarInvitacion.disabled = true;
+
+        estadoMensaje.textContent = "Enviado";
+        estadoMensaje.classList.remove("text-bg-secondary");
+        estadoMensaje.classList.add("text-bg-success");
+        btnReenviarInvitacion.removeAttribute("disabled");
+
+      } else if (resultado.guardado && !resultado.correo_enviado) {
+        Swal.fire({
+          icon: "warning",
+          title: "Advertencia",
+          text: "Postulante guardado, pero no se pudo enviar el correo.",
+        });
+        estadoPostulacion.textContent = "Guardado";
+        estadoPostulacion.classList.remove("text-bg-secondary");
+        estadoPostulacion.classList.add("text-bg-success");
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Postulante no guardado.",
+        });
+      } 
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: data.mensaje,
+      });
+    }
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Error de red o del servidor. Intente nuevamente.",
+    });
+  }
+}
+
+async function reenviarInvitacionPreReque(
+  btnReenviarInvitacion,
+  idPreseleccionadoEnviar,
+  idRequerimientoEnviar
+) {
+
+  const fila = btnReenviarInvitacion.closest(".filaPreseleecionado");
+  const estadoMensaje = fila.querySelector(".estadoMensaje");
+  try {
+    Swal.fire({
+      title: "Enviando correo.",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    let formData = new FormData();
+    formData.append("id_preseleccionado", idPreseleccionadoEnviar);
+    formData.append("id_requerimiento", idRequerimientoEnviar);
+
+    const resp = await fetch("api/reenviarInvitacionPreReque", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await resp.json();
+
+    if (data.exitoso) {
+      const resultado = data.respuesta;
+
+      if (resultado.correo_enviado) {
+        Swal.fire({
+          icon: "success",
+          title: "Éxito",
+          text: "Se volvio a enviar la clave a su correo.",
+        });
+        estadoMensaje.textContent = "Enviado";
+        estadoMensaje.classList.remove("text-bg-secondary");
+        estadoMensaje.classList.add("text-bg-success");
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudo volver a enviar el correo.",
+        });
+      }
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: data.mensaje,
+      });
+    }
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Error de red o del servidor. Intente nuevamente.",
+    });
+  }
 }

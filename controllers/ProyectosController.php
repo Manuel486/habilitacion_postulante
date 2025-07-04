@@ -1,11 +1,18 @@
 <?php
 
+use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Exp;
+
 require_once MODELS_PATH . "/ProyectoModel.php";
 require_once MODELS_PATH . "/GeneralModel.php";
 require_once MODELS_PATH . "/RequerimientoModel.php";
 require_once MODELS_PATH . "/PreseleccionadoModel.php";
 require_once MODELS_PATH . "/CursoCertificacionModel.php";
 require_once CONTROLLERS_PATH . "/helpers/ApiRespuesta.php";
+require_once __DIR__ . "/../models/PostulanteModel.php";
+require_once __DIR__ . "/helpers/sendEmailStatusPre.php";
+require_once __DIR__ . "/../models/PostulanteModel.php";
+require_once __DIR__ . "/../models/LegajoModel.php";
+require_once __DIR__ . "/../models/AdjuntosModel.php";
 
 class ProyectosController
 {
@@ -15,6 +22,9 @@ class ProyectosController
     private $requerimientoModel;
     private $preseleccionadoModel;
     private $curso_certificacionModel;
+    private $postulanteModel;
+    private $legajoModel;
+    private $adjuntosModel;
 
     public function __construct()
     {
@@ -23,6 +33,9 @@ class ProyectosController
         $this->requerimientoModel = new RequerimientoModel();
         $this->preseleccionadoModel = new PreseleccionadoModel();
         $this->curso_certificacionModel = new CursoCertificacionModel();
+        $this->postulanteModel = new PostulanteModel();
+        $this->legajoModel = new LegajoModel();
+        $this->adjuntosModel = new AdjuntosModel();
     }
 
     public function vistaProyectos()
@@ -185,7 +198,7 @@ class ProyectosController
             $preseleccionado = $this->preseleccionadoModel->obtenerPorIdPreseleccionado($idPreseleccionado);
             $cursos = $this->preseleccionadoModel->obtenerCurCertPreseleccionado($idPreseleccionado, "curso");
             $certificados = $this->preseleccionadoModel->obtenerCurCertPreseleccionado($idPreseleccionado, "certificado");
-            $preseleccionado_requerimiento = $this->preseleccionadoModel->obtenerInformacionPreselecRequerimiento($idPreseleccionado,$idRequerimiento);
+            $preseleccionado_requerimiento = $this->preseleccionadoModel->obtenerInformacionPreselecRequerimiento($idPreseleccionado, $idRequerimiento);
             $alertas_cur_cert = $this->preseleccionadoModel->obtenerAlertasCertiCurso($idPreseleccionado);
 
             $preseleccionado["cursos"] = $cursos;
@@ -283,8 +296,8 @@ class ProyectosController
             exit;
         }
 
-        $informacion_medica = json_decode($_POST["informacion_medica"],true);
-        
+        $informacion_medica = json_decode($_POST["informacion_medica"], true);
+
         $respuesta = $this->preseleccionadoModel->actualizarPreseleccionadoRequerimientoInfMedica($informacion_medica);
 
         if ($respuesta) {
@@ -401,6 +414,150 @@ class ProyectosController
         }
     }
 
+    public function apiEnviarInvitacionPreseReque()
+    {
+        if (!isset($_POST["id_preseleccionado"]) || !isset($_POST["id_requerimiento"])) {
+            echo ApiRespuesta::error("Debe enviar el id del preseleccionado y del requerimiento.");
+            exit;
+        }
+
+        try {
+            $idPreseleccionado = $_POST["id_preseleccionado"];
+            $idRequerimiento = $_POST["id_requerimiento"];
+            $preseleccionado = $this->preseleccionadoModel->obtenerPorIdPreseleccionado($idPreseleccionado);
+            $requerimiento = $this->requerimientoModel->obtenerRequerimientoPorId($idRequerimiento);
+
+            if (!$preseleccionado || !$requerimiento) {
+                echo ApiRespuesta::error("Preseleccionado o requerimiento no encontrado.");
+                return;
+            }
+
+            // $preseleccionado_requerimiento = $this->preseleccionadoModel->obtenerInformacionPreselecRequerimiento($idPreseleccionado, $idRequerimiento);
+
+            $id = uniqid("PO");
+            $doc = "000000000000000000000000000000";
+            $reg = 1;
+            $pass = rand(100000, 999999);
+            $enviado = 0;
+
+            $idPrevio = $this->postulanteModel->buscarReciente($preseleccionado["documento"]);
+            if (!empty($idPrevio)) {
+                $estado = $idPrevio[0]['estado'];
+                $doc = substr_replace($estado, '1', 0, 1);
+                $doc = substr($doc, 0, 22);
+                $doc = $doc . str_repeat('0', 31 - strlen($doc));
+            }
+
+            $insertado = $this->postulanteModel->insertarPorstulanteDesdeStatus(
+                $id,
+                $preseleccionado,
+                $requerimiento,
+                $reg,
+                $pass,
+                $doc,
+                0,
+                "1"
+            );
+
+            if (!$insertado) {
+                echo ApiRespuesta::error("No se pudo guardar el postulante.");
+                exit;
+            }
+
+            $this->preseleccionadoModel->actualizarPreseRequeIdPostulante($idPreseleccionado, $idRequerimiento, $id);
+
+            $correoExito = sendMailStatus(
+                $preseleccionado["apellidos_nombres"],
+                $preseleccionado["email"],
+                $pass,
+                $requerimiento["nombreCargo"],
+                $requerimiento["nombreFase"],
+                $requerimiento["nombreProyecto"],
+                "desarrollador",
+                "mchunga@sepcon.net"
+            );
+
+            if ($correoExito) {
+                $this->postulanteModel->marcarCorreoEnviado($id);
+            }
+
+            if (!empty($idPrevio)) {
+                $this->adjuntosModel->updateAdjuntos($idPrevio[0]['codigo'], $id);
+                $this->legajoModel->nuevaFicha($idPrevio[0]['codigo'], $id);
+            } else {
+                $this->adjuntosModel->insertarCodigoAdjuntos($id, $doc);
+            }
+
+            if ($correoExito) {
+                echo ApiRespuesta::exitoso([
+                    "guardado" => true,
+                    "correo_enviado" => true
+                ], "Postulante guardado y correo enviado correctamente.");
+                exit;
+            } else {
+                echo ApiRespuesta::exitoso([
+                    "guardado" => true,
+                    "correo_enviado" => false
+                ], "Postulante guardado, pero no se pudo enviar el correo.");
+                exit;
+            }
+
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            echo ApiRespuesta::error("Error inesperado al procesar la invitación.");
+        }
+    }
+
+    public function apiReenviarInvitacionPreReque()
+    {
+        if (!isset($_POST["id_preseleccionado"]) || !isset($_POST["id_requerimiento"])) {
+            echo ApiRespuesta::error("Debe enviar el id del preseleccionado y del requerimiento.");
+            exit;
+        }
+
+        try {
+            $idPreseleccionado = $_POST["id_preseleccionado"];
+            $idRequerimiento = $_POST["id_requerimiento"];
+            $preseleccionado_requerimiento = $this->preseleccionadoModel->obtenerInformacionPreselecRequerimiento($idPreseleccionado, $idRequerimiento);
+
+            if (isset($preseleccionado_requerimiento["id_postulante"])) {
+                $postulante = $this->postulanteModel->obtenerPostulantePorId($preseleccionado_requerimiento["id_postulante"]);
+                $correoExito = sendMailStatus(
+                    $postulante["nombres"],
+                    $postulante["correo"],
+                    $postulante["clave"],
+                    $postulante["cargoDescripcion"],
+                    $postulante["faseDescripcion"],
+                    $postulante["nombreProyecto"],
+                    "desarrollador",
+                    "mchunga@sepcon.net"
+                );
+
+                if ($correoExito) {
+                    $this->postulanteModel->marcarCorreoEnviado($postulante["idreg"]);
+                }
+
+                if ($correoExito) {
+                    echo ApiRespuesta::exitoso([
+                        "correo_enviado" => true
+                    ], "Se volvio a enviar la clave a su correo.");
+                    exit;
+                } else {
+                    echo ApiRespuesta::exitoso([
+                        "correo_enviado" => false
+                    ], "No se pudo volver a enviar el correo.");
+                    exit;
+                }
+            }
+
+            echo ApiRespuesta::error("Todavía no se genera su postulación.");
+            exit;
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            echo ApiRespuesta::error("Error inesperado al procesar la invitación.");
+        }
+    }
+
     public function apiEliminarCursCertPreseleccionado()
     {
         if (!isset($_POST["id_prese_curs_certi"])) {
@@ -422,6 +579,7 @@ class ProyectosController
             echo ApiRespuesta::error("Error inesperado al eliminar.");
         }
     }
+
 
     public function apiObtenerHistorialProyectos()
     {

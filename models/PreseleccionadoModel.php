@@ -8,7 +8,7 @@ class PreseleccionadoModel
     {
     }
 
-    public function obtenerPreseleccionados($whereIdRequerimiento,$executeRequerimiento)
+    public function obtenerPreseleccionados($whereIdRequerimiento, $executeRequerimiento)
     {
         $pdo = ConexionDocumentos::getInstancia()->getConexion();
         try {
@@ -170,7 +170,7 @@ class PreseleccionadoModel
 
             for ($i = 0; $i < $columnCount; $i++) {
                 $meta = $stmt->getColumnMeta($i);
-                $columnas[] = $meta['name'];              
+                $columnas[] = $meta['name'];
             }
 
             return $columnas;
@@ -262,12 +262,14 @@ class PreseleccionadoModel
                             WHERE pcc.id_preseleccionado = p.id_preseleccionado
                             AND pcc.fecha_fin > DATE_ADD(CURDATE(), INTERVAL 30 DAY)
                         ) THEN 1 ELSE 0 
-                    END AS tiene_vigente
-
+                    END AS tiene_vigente,
+                    pr.id_postulante,
+                    ps.enviado
                 FROM 
                     preseleccionado_requerimiento pr
                 INNER JOIN 
                     preseleccionado p ON p.id_preseleccionado = pr.id_preseleccionado
+                LEFT JOIN postulante ps ON ps.idreg = pr.id_postulante
                 WHERE 
                     pr.id_reque_proy = :id_reque_proy";
             $statement = $pdo->prepare($sql);
@@ -431,6 +433,29 @@ class PreseleccionadoModel
         }
     }
 
+    public function actualizarPreseRequeIdPostulante($idPreseleccionado,$idRequerimiento,$id)
+    {
+        $pdo = ConexionDocumentos::getInstancia()->getConexion();
+        try {
+            $sql = "UPDATE preseleccionado_requerimiento SET 
+                        id_postulante=:id_postulante
+                    WHERE id_preseleccionado=:id_preseleccionado
+                    AND id_reque_proy=:id_reque_proy";
+
+            $statement = $pdo->prepare($sql);
+
+            $success = $statement->execute([
+                "id_postulante" => $id,
+                "id_preseleccionado" => $idPreseleccionado,
+                "id_reque_proy" => $idRequerimiento
+            ]);
+
+            return $success;
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
     public function actualizarPreseleccionadoRequerimientoInfMedica($informacion_medica)
     {
         $pdo = ConexionDocumentos::getInstancia()->getConexion();
@@ -570,7 +595,8 @@ class PreseleccionadoModel
         }
     }
 
-    public function obtenerInformacionPreselecRequerimiento($idPreseleccionado, $idRequerimiento){
+    public function obtenerInformacionPreselecRequerimiento($idPreseleccionado, $idRequerimiento)
+    {
         $pdo = ConexionDocumentos::getInstancia()->getConexion();
         try {
             $sql = "SELECT * FROM preseleccionado_requerimiento 
@@ -582,15 +608,16 @@ class PreseleccionadoModel
                 "id_preseleccionado" => $idPreseleccionado,
                 "id_reque_proy" => $idRequerimiento,
             ]);
-            return $statement->fetchAll(PDO::FETCH_ASSOC);
+            return $statement->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             return [];
         }
     }
 
-    public function obtenerAlertasCertiCurso($idPreseleccionado){
+    public function obtenerAlertasCertiCurso($idPreseleccionado)
+    {
         $pdo = ConexionDocumentos::getInstancia()->getConexion();
-        try{
+        try {
 
             $sql = "SELECT 
                         cc.nombre,
@@ -612,7 +639,7 @@ class PreseleccionadoModel
                 "id_preseleccionado" => $idPreseleccionado
             ]);
             return $statement->fetchAll(PDO::FETCH_ASSOC);
-        }catch(PDOException $e){
+        } catch (PDOException $e) {
             return [];
         }
     }

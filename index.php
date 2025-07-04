@@ -95,6 +95,20 @@ $router->map('POST', '/api/eliminarPreseRequer', function() {
     $controller->apiEliminarPreseleccionadoRequerimiento();
 });
 
+$router->map('POST', '/api/envitarInvitacionPreReque', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiEnviarInvitacionPreseReque();
+});
+
+$router->map('POST', '/api/reenviarInvitacionPreReque', function() {
+    require_once CONTROLLERS_PATH.'/ProyectosController.php';
+    $controller = new ProyectosController();
+    $controller->apiReenviarInvitacionPreReque();
+});
+
+
+
 $router->map('POST', '/api/eliminarCursCertPreseleccionado', function() {
     require_once CONTROLLERS_PATH.'/ProyectosController.php';
     $controller = new ProyectosController();

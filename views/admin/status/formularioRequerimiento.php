@@ -45,12 +45,18 @@
                         <div class="col-lg-4">
                             <label class="form-label" for="sltFase">Fase <span
                                     class="text-danger fw-bold">*</span></label>
-                            <select class="form-select border-dark" id="sltFase">
+                            <!-- <select class="form-select border-dark" id="sltFase">
                                 <option value="" disabled selected>Seleccionar una opción</option>
                                 <?php foreach ($fases as $fase): ?>
                                     <option value="<?= $fase["cod"] ?>"><?= $fase["descripcion"] ?></option>
                                 <?php endforeach; ?>
-                            </select>
+                            </select> -->
+                            <div><select class="form-select border-dark" id="sltFase">
+                                <option value="" disabled selected>Seleccionar una fase</option>    
+                                <?php foreach ($fases as $fase): ?>
+                                    <option value="<?= $fase["cod"] ?>"><?= $fase["descripcion"] ?></option>
+                                <?php endforeach; ?>
+                            </select></div>
                         </div>
                         <div class="col-lg-4">
                             <label class="form-label" for="sltCargo">Cargo <span

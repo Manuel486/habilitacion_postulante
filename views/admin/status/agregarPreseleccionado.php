@@ -300,6 +300,7 @@
                                             <th>Fecha de ingreso</th>
                                             <th>Fecha de cese</th>
                                             <th>Observación</th>
+                                            <th>Tipo de cese</th>
                                         </thead>
                                         <tbody>
 
@@ -312,17 +313,29 @@
                     <div class="tab-pane fade" id="certificados" role="tabpanel">
                         <div class="row">
                             <div class="">
-                                <div class="col-lg-8">
+                                <div class="col-lg-12">
                                     <label class="form-label" for="">Ingresar el nombre de la certificación</label>
-                                    <div class="d-flex gap-2">
-                                        <input type="text" class="form-control  border-dark"
-                                            placeholder="Nombre de la certificación" />
-                                        <button class="btn btn-outline-dark d-flex gap-2">
-                                            <i class="bi bi-search"></i>Buscar
-                                        </button>
-                                        <button class="btn btn-outline-dark d-flex gap-2" id="btnAgregarCertificacion">
-                                            Agregar
-                                        </button>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex gap-2">
+                                            <input type="text" class="form-control  border-dark"
+                                                placeholder="Nombre de la certificación" />
+                                            <button class="btn btn-outline-dark d-flex gap-2">
+                                                <i class="bi bi-search"></i>Buscar
+                                            </button>
+                                            <button class="btn btn-outline-dark d-flex gap-2"
+                                                id="btnAgregarCertificacion">
+                                                Agregar
+                                            </button>
+                                        </div>
+                                        <div class="">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckDefault">
+                                                <label class="form-check-label" for="flexCheckDefault">
+                                                    CUMPLE CON LAS CERTIFICACIONES NECESARIAS PARA ESTE REQUERIMIENTO
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="my-1 p-1">
@@ -347,17 +360,28 @@
                     <div class="tab-pane fade" id="cursos" role="tabpanel">
                         <div class="row">
                             <div class="">
-                                <div class="col-lg-8">
+                                <div class="col-lg-12">
                                     <label class="form-label" for="">Ingresar el nombre del curso</label>
-                                    <div class="d-flex gap-2">
-                                        <input type="text" class="form-control  border-dark"
-                                            placeholder="Nombre del curso" />
-                                        <button class="btn btn-outline-dark d-flex gap-2">
-                                            <i class="bi bi-search"></i>Buscar
-                                        </button>
-                                        <button class="btn btn-outline-dark d-flex gap-2" id="btnAgregarCurso">
-                                            <i class="bi bi-plus-circle"></i>Agregar
-                                        </button>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex gap-2">
+                                            <input type="text" class="form-control  border-dark"
+                                                placeholder="Nombre del curso" />
+                                            <button class="btn btn-outline-dark d-flex gap-2">
+                                                <i class="bi bi-search"></i>Buscar
+                                            </button>
+                                            <button class="btn btn-outline-dark d-flex gap-2" id="btnAgregarCurso">
+                                                <i class="bi bi-plus-circle"></i>Agregar
+                                            </button>
+                                        </div>
+                                        <div class="">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckDefault">
+                                                <label class="form-check-label" for="flexCheckDefault">
+                                                    CUMPLE CON LOS CURSOS NECESARIOS PARA ESTE REQUERIMIENTO
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="my-1 p-1">
@@ -381,10 +405,18 @@
                     </div>
                     <div class="tab-pane fade" id="informacion_medica" role="tabpanel">
                         <div class="row row-gap-3">
+                            <div class="col-lg-12 d-flex justify-content-end">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                        APROBAR INFORMACIÓN MÉDICA
+                                    </label>
+                                </div>
+                            </div>
                             <div class="col-lg-3">
                                 <label class="form-label" for="txt4taVacuna">4ta vacuna</label>
-                                <input class="form-control  border-dark" type="text"
-                                    placeholder="Ingresar 4ta vacuna" id="txt4taVacuna" />
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar 4ta vacuna"
+                                    id="txt4taVacuna" />
                             </div>
                             <div class="col-lg-3">
                                 <label class="form-label" for="txtFechaExamenMedico">Fecha de examen médico</label>
@@ -410,15 +442,18 @@
                             </div>
                             <div class="col-lg-3">
                                 <label class="form-label" for="txtPaseMedico">Pase medico</label>
-                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" id="txtPaseMedico" />
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado"
+                                    id="txtPaseMedico" />
                             </div>
                             <div class="col-lg-3">
                                 <label class="form-label" for="txtPM">PM</label>
-                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" id="txtPM" />
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado"
+                                    id="txtPM" />
                             </div>
                             <div class="col-lg-3">
                                 <label class="form-label" for="txtInformeMedico">Informe médico</label>
-                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado" id="txtInformeMedico" />
+                                <input class="form-control  border-dark" type="text" placeholder="Ingresar estado"
+                                    id="txtInformeMedico" />
                             </div>
                             <div class="col-lg-3 d-flex align-items-end">
                                 <button type="submit" class="btn btn-success" id="btnActualizarInforMedica"><i

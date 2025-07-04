@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="<?= BASE_URL ?>views/css/preseleccionado.css" />
   <script src="<?= BASE_URL ?>views/js/sweetalert2.js"></script>
 </head>
+
 <body class="p-5 bg-light">
   <ol class="breadcrumb">
     <li class="breadcrumb-item">Postulante</li>
@@ -53,11 +54,11 @@
               <th class="encabezado">Fecha de registro</th>
               <th>Número del requerimiento</th>
               <th>Fecha de requerimiento</th>
-              <th>Tipo de requerimiento</th>
+              <!-- <th>Tipo de requerimiento</th> -->
               <th>Fase</th>
               <th>Cargo</th>
               <th>Cantidad</th>
-              <th>Regimen</th>
+              <th>Proyecto</th>
               <th></th>
             </thead>
             <tbody>
@@ -66,7 +67,7 @@
                   <td><?= $requerimiento["fecha_registro"] ?></td>
                   <td><?= $requerimiento["numero_requerimiento"] ?></td>
                   <td><?= implode("-", array_reverse(explode("-", $requerimiento["fecha_requerimiento"]))) ?></td>
-                  <td><?= $requerimiento["tipo_requerimiento"] ?></td>
+                  <!-- <td><?= $requerimiento["tipo_requerimiento"] ?></td> -->
                   <td><?= $requerimiento["nombreFase"] ?></td>
                   <td><?= $requerimiento["nombreCargo"] ?></td>
                   <td>
@@ -74,7 +75,7 @@
                       <?= $requerimiento["cubiertos"] ?>/<?= $requerimiento["cantidad"] ?>
                     </span>
                   </td>
-                  <td><?= $requerimiento["regimen"] ?></td>
+                  <td><?= $requerimiento["nombreProyecto"] ?></td>
                   <td>
                     <button type="button" class="btn btn-outline-dark border-dark" data-bs-toggle="modal"
                       data-bs-target="#documentoModal"
@@ -102,51 +103,85 @@
                         </button> -->
                       </div>
                       <div class="table-responsive">
-                        <div class="table table-bordered">
-                          <div class="row g-0 bg-light text-dark text-center text-uppercase fw-semibold">
+                        <div class="table table-bordered" id="tblRequerimientoPreseleccionados">
+
+                          <div class="row g-0 bg-light text-dark text-center fw-semibold">
                             <div class="col p-2">Fecha de registro</div>
                             <div class="col p-2">Nombre completo</div>
                             <div class="col p-2">Documento</div>
-                            <div class="col p-2">Exactian</div>
-                            <div class="col p-2">Ingreso último proyecto</div>
-                            <div class="col p-2">Cese último proyecto</div>
-                            <div class="col p-2">Certificado-Cursos</div>
+                            <div class="col p-2">Fecha Nacimiento</div>
+                            <div class="col p-2">Celular</div>
+                            <div class="col p-2">Observaciones</div>
+                            <div class="col p-2">Cursos</div>
+                            <div class="col p-2">Certificados</div>
+                            <div class="col p-2">Información médica</div>
+                            <div class="col p-2">Postulacion guardada</div>
+                            <div class="col p-2">Correo enviado</div>
                             <div class="col p-2">Opciones</div>
                           </div>
 
                           <?php foreach ($requerimiento["preseleccionados"] as $preseleccionado): ?>
-                            <div class="row g-0 text-center text-uppercase filaPreseleecionado">
-                              <div class="col p-2"><?= $preseleccionado["fecha_registro"] ?></div>
-                              <div class="col p-2"><?= $preseleccionado["apellidos_nombres"] ?></div>
-                              <div class="col p-2"><?= $preseleccionado["documento"] ?></div>
-                              <div class="col p-2"><?= $preseleccionado["exactian"] ?></div>
-                              <div class="col p-2">
-                                <?= implode("-", array_reverse(explode("-", $preseleccionado["fecha_ingreso_ultimo_proyecto"]))) ?>
+                            <div class="row g-0 text-center border filaPreseleecionado">
+                              <div class="col p-2 d-flex align-items-center justify-content-center">
+                                <?= $preseleccionado["fecha_registro"] ?>
                               </div>
-                              <div class="col p-2">
-                                <?= implode("-", array_reverse(explode("-", $preseleccionado["fecha_cese_ultimo_proyecto"]))) ?>
+                              <div class="col p-2 d-flex align-items-center justify-content-center">
+                                <?= $preseleccionado["apellidos_nombres"] ?>
                               </div>
-                              <div class="col p-2 d-flex align-items-center justify-content-center gap-1">
-                                <?php if ($preseleccionado["tiene_cerca"] > 0): ?>
-                                  <span class="badge text-bg-warning">Cerca</span>
-                                <?php endif; ?>
-                                <?php if ($preseleccionado["tiene_caduco"] > 0): ?>
-                                  <span class="badge text-bg-danger">Caducó</span>
-                                <?php endif; ?>
-                                <?php if ($preseleccionado["tiene_vigente"] > 0 and $preseleccionado["tiene_cerca"] == 0 and $preseleccionado["tiene_caduco"] == 0): ?>
-                                  <span class="badge text-bg-success">Vigente</span>
+                              <div class="col p-2 d-flex align-items-center justify-content-center">
+                                <?= $preseleccionado["documento"] ?>
+                              </div>
+                              <div class="col p-2 d-flex align-items-center justify-content-center">
+                                <?= $preseleccionado["fecha_nacimiento"] ?>
+                              </div>
+                              <div class="col p-2 d-flex align-items-center justify-content-center">
+                                <?= $preseleccionado["telefono_1"] ?>
+                              </div>
+                              <div class="col p-2 d-flex align-items-center justify-content-center">
+                                <span class="badge rounded-pill text-bg-secondary">Sin observaciones</span>
+                              </div>
+                              <div class="col p-2 d-flex align-items-center justify-content-center">
+                                <span class="badge rounded-pill text-bg-secondary">No aprobado</span>
+                              </div>
+                              <div class="col p-2 d-flex align-items-center justify-content-center">
+                                <span class="badge rounded-pill text-bg-success">Aprobado</span>
+                              </div>
+                              <div class="col p-2 d-flex align-items-center justify-content-center">
+                                <span class="badge rounded-pill text-bg-secondary">No aprobado</span>
+                              </div>
+                              <div class="col p-2 d-flex align-items-center justify-content-center">
+                                <?php if (isset($preseleccionado["id_postulante"])): ?>
+                                  <span class="badge rounded-pill text-bg-success estadoPostulacion">Guardada</span>
+                                <?php else: ?>
+                                  <span class="badge rounded-pill text-bg-secondary estadoPostulacion">No guardado</span>
                                 <?php endif; ?>
                               </div>
-                              <div class="col p-2">
-                                <button class="btn btn-outline-info" data-bs-target="#requerimientoModal"
-                                  data-bs-toggle="modal" id="visualizarPreReque"
+                              <div class="col p-2 d-flex align-items-center justify-content-center">
+                                <?php if (isset($preseleccionado["enviado"]) && $preseleccionado["enviado"] == 1): ?>
+                                  <span class="badge rounded-pill text-bg-success estadoMensaje">Enviado</span>
+                                <?php else: ?>
+                                  <span class="badge rounded-pill text-bg-secondary estadoMensaje">No enviado</span>
+                                <?php endif; ?>
+                              </div>
+                              <div class="col p-2 my-2">
+                                <button type="button" class="btn btn-info" data-bs-target="#requerimientoModal"
+                                  data-bs-toggle="modal"
                                   onClick="cargarDatosPreseleccionado('<?= $preseleccionado["id_preseleccionado"] ?>','<?= $requerimiento["id_requerimiento"] ?>')">
-                                  <i class="bi bi-eye"></i>
+                                  <i class="bi bi-eye-fill"></i>
                                 </button>
-                                <button class="btn btn-outline-danger" id="eliminarPreReque"
+                                <button type="button" class="btn btn-success" <?= !isset($preseleccionado["id_postulante"]) ? "" : "disabled" ?>
+                                  onClick="enviarInvitacion(this,'<?= $preseleccionado["id_preseleccionado"] ?>','<?= $requerimiento["id_requerimiento"] ?>')">
+                                  <i class="bi bi-send-fill"></i>
+                                </button>
+                                <button type="button" class="btn btn-info btnReenviarInvitacion"
+                                  <?= isset($preseleccionado["id_postulante"]) ? "" : "disabled" ?>
+                                  onClick="reenviarInvitacionPreReque(this,'<?= $preseleccionado["id_preseleccionado"] ?>','<?= $requerimiento["id_requerimiento"] ?>')">
+                                  <i class="bi bi-arrow-repeat"></i>
+                                </button>
+                                <!-- <button class="btn btn-outline-danger" id="eliminarPreReque"
                                   onClick="eliminarPreseDelReque(this,'<?= $preseleccionado["id_preseleccionado"] ?>','<?= $requerimiento["id_requerimiento"] ?>')">
                                   <i class="bi bi-trash3"></i>
-                                </button>
+                                </button> -->
                               </div>
                             </div>
                           <?php endforeach; ?>

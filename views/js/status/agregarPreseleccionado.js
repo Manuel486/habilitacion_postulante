@@ -200,11 +200,11 @@ async function cargarDatosPreseleccionado(
 
     llenarCamposAlertasCurCert(data.respuesta.alertas_cur_cert);
     llenarCamposDatosGenerales(data.respuesta);
-    llenarInformacionPreReque(data.respuesta.preseleccionado_requerimiento[0]);
+    llenarInformacionPreReque(data.respuesta.preseleccionado_requerimiento);
     llenarCamposCursosCertificados(data.respuesta.cursos, "curso");
     llenarCamposCursosCertificados(data.respuesta.certificados, "certificado");
-    llenarInformacionMedica(data.respuesta.preseleccionado_requerimiento[0]);
-    
+    llenarInformacionMedica(data.respuesta.preseleccionado_requerimiento);
+
     await llenarHistorialProyectos(data.respuesta.documento);
 
     Swal.close();
@@ -383,7 +383,7 @@ function llenarInformacionMedica(informacion_medica) {
 
   txt4taVacuna.value = informacion_medica.cuarta_vacuna;
   txtFechaExamenMedico.value = informacion_medica.fecha_examen_medico;
-  if(informacion_medica.clinica !== null){
+  if (informacion_medica.clinica !== null) {
     sltClinica.value = informacion_medica.clinica;
   }
   txtResultado.value = informacion_medica.resultado;
@@ -572,6 +572,7 @@ async function llenarHistorialProyectos(documento) {
             proyecto.cese?.split(" ")[0].split("-").reverse().join("-") ?? "--"
           }</td>
           <td class="">${proyecto.obs ?? "--"}</td>
+          <td class="">${proyecto.tipo_cese ?? "--"}</td>
           `;
 
         tblProyectosPreseleccionado.append(tr);
@@ -645,7 +646,7 @@ function agregarNuevoCursoCertificado(tipo, listaItems) {
   tr.innerHTML = `
     <td>
       <select class="form-select border-dark">
-        <option selected disabled>Seleccionar una opción</option>
+        <option value="" selected disabled>Seleccionar una opción</option>
         ${listaItems
           .map(
             (item) =>
@@ -685,6 +686,17 @@ function agregarNuevoCursoCertificado(tipo, listaItems) {
         });
         return;
       }
+
+      // if (id_curs_certi == "") {
+      //   Swal.fire({
+      //     title: "Error",
+      //     text: `Debe seleccionar un ${
+      //       tipo === "curso" ? "curso" : "certificado"
+      //     }`,
+      //     icon: "error",
+      //   });
+      //   return;
+      // }
 
       btnNuevoGuardar.disabled = true;
       btnNuevoGuardar.textContent = "Guardando...";

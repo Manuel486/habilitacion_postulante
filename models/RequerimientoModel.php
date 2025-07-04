@@ -21,16 +21,43 @@ class RequerimientoModel
                         rp.cantidad,
                         rp.regimen,
                         gf.descripcion as 'nombreFase',
-                        gc.descripcion as 'nombreCargo'
+                        gc.descripcion as 'nombreCargo',
+                        tp.cdespry as 'nombreProyecto'
                     from 
-                    requerimiento_proyecto rp
-                    LEFT JOIN general gf ON gf.cod = rp.id_fase AND gf.clase='09'
-                    LEFT JOIN general gc ON gc.cod = rp.id_cargo AND gc.clase='01'
+                    documentos.requerimiento_proyecto rp
+                    LEFT JOIN documentos.general gf ON gf.cod = rp.id_fase AND gf.clase='09'
+                    LEFT JOIN documentos.general gc ON gc.cod = rp.id_cargo AND gc.clase='01'
+                    LEFT JOIN logistica.tb_proyecto1 tp ON tp.ncodpry = rp.id_proyecto
                     ORDER BY fecha_registro DESC";
 
             $statement = $pdo->prepare($sql);
             $statement->execute();
             return $statement->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
+        }
+    }
+
+    public function obtenerRequerimientoPorId($id_requerimiento)
+    {
+        $pdo = ConexionDocumentos::getInstancia()->getConexion();
+        try {
+            $sql = "SELECT 
+                        rp.*,
+                        gf.descripcion as 'nombreFase',
+                        gc.descripcion as 'nombreCargo',
+                        tp.cdespry as 'nombreProyecto'
+                    from documentos.requerimiento_proyecto rp
+                    LEFT JOIN documentos.general gf ON gf.cod = rp.id_fase AND gf.clase='09'
+                    LEFT JOIN documentos.general gc ON gc.cod = rp.id_cargo AND gc.clase='01'
+                    LEFT JOIN logistica.tb_proyecto1 tp ON tp.ncodpry = rp.id_proyecto
+                    WHERE id_requerimiento=:id_requerimiento";
+
+            $statement = $pdo->prepare($sql);
+            $statement->execute([
+                "id_requerimiento" => $id_requerimiento
+            ]);
+            return $statement->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             return [];
         }
